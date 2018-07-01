@@ -93,6 +93,7 @@ describe('the flag pole', () => {
         }
       },
       environments: {
+        available: ['dev', 'qa'],
         current: 'dev'
       }
     })
@@ -104,7 +105,7 @@ describe('the flag pole', () => {
     })
   })
 
-  describe.only('fails with a consistency error when...', () => {
+  describe('fails with a consistency error when...', () => {
     it('...a flag is missing a description', () => {
       const config = {
         flags: {
@@ -129,6 +130,37 @@ describe('the flag pole', () => {
       expect(() => flagPole.wrap(config)).to.throw('is_it_enabled')
     })
 
-    it('...flag is configured for an unknown environment')
+    it('...multiple environments are not listed as available', () => {
+      const config = {
+        flags: {
+          anything: {
+            description: 'We dont know odd or dev yet',
+            enabled: {
+              dev: true
+            }
+          }
+        }
+      }
+
+      expect(() => flagPole.wrap(config)).to.throw('You need to configure which environments')
+    })
+
+    it('...a flag is configured for an unexpected environment', () => {
+      const config = {
+        flags: {
+          anything: {
+            description: 'We dont know odd or dev yet',
+            enabled: {
+              odd: true
+            }
+          }
+        },
+        environments: {
+          available: ['dev']
+        }
+      }
+
+      expect(() => flagPole.wrap(config)).to.throw('anything')
+    })
   })
 })

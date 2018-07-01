@@ -34,6 +34,19 @@ module.exports = {
       if (!flag.hasOwnProperty('enabled')) {
         throw `The feature flag ${flagName} has no key enabled. It is a healthy practice to make statements about the state of the flag explicit. If you rely on a source to enable it, at least mark it as 'enabled: false' in the config.`
       }
+
+      if (typeof flag.enabled === 'object') {
+        if (config.environments) {
+          const configuredEnvs = config.environments.available || []
+          for (const envInFlag in flag.enabled) {
+            if (!configuredEnvs.includes(envInFlag)) {
+              throw `The feature flag ${flagName} is configured for ${envInFlag} that is not listed in environments.available: ${configuredEnvs}. Please check if this is an error.`
+            }
+          }
+        } else {
+          throw "You need to configure which environments are available to your application under config.environments.available as an array of strings. This allows us to check your config for consistency"
+        }
+      }
     }
 
     return {
