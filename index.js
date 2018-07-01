@@ -1,5 +1,5 @@
-var checkSources = function(sources, flag) {
-  for(var source of sources) {
+const checkSources = (sources, flag) => {
+  for(const source of sources) {
     if (typeof source === 'function' && source(flag)) {
       return true
     }
@@ -10,7 +10,7 @@ var checkSources = function(sources, flag) {
 }
 
 module.exports = {
-  wrap: function(config) {
+  wrap: (config) => {
     return {
       flags: config.flags,
       sources: config.sources || [],
