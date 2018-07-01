@@ -7,10 +7,13 @@ describe('the flag pole', () => {
     features = flagPole.wrap({
       flags: {
         dynamic_contact_form: {
+          description:
+            'The new form that fills in form contacts from the current account',
           enabled: true
         },
 
         disabled_feature: {
+          description: 'The featuer we are working on but have disabled',
           enabled: false
         }
       }
@@ -45,9 +48,13 @@ describe('the flag pole', () => {
     beforeEach(() => {
       featuresWithExtraSource = flagPole.wrap({
         flags: {
-          from_the_naive_source: {},
+          from_the_naive_source: {
+            description: 'A flag that is enabled by a simple functipon'
+          },
 
-          from_the_complex_source: {}
+          from_the_complex_source: {
+            description: 'A flag that is enabled by a complex object'
+          }
         },
         sources: [naiveSource, complexSource]
       })
@@ -74,12 +81,14 @@ describe('the flag pole', () => {
           }
         },
         enabled_in_qa: {
+          description: 'This is only on in QA',
           enabled: {
             dev: false,
             qa: true
           }
         },
         always_on: {
+          description: 'Evergreen feature',
           enabled: true
         }
       },
@@ -93,5 +102,21 @@ describe('the flag pole', () => {
       expect(features.isEnabled('always_on')).to.be.true
       expect(features.isEnabled('enabled_in_qa')).to.be.false
     })
+  })
+
+  describe.only('fails with a consistency error when...', () => {
+    it('...a flag is missing a description', () => {
+      const config = {
+        flags: {
+          has_no_description: {
+            enabled: true
+          }
+        }
+      }
+
+      expect(() => flagPole.wrap(config)).to.throw('')
+    })
+
+    it('...flag is configured for an unknown environment')
   })
 })

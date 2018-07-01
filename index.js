@@ -25,6 +25,12 @@ const missing = (flagName) => {
 
 module.exports = {
   wrap: (config) => {
+    for (const flagName in config.flags) {
+      if (!config.flags[flagName].hasOwnProperty('description')) {
+        throw `The feature flag ${flagName} did not have a 'description'. Please ensure you describe a feature flag in a few words to allow fellow engineers to avoid guessing`
+      }
+    }
+
     return {
       flags: config.flags,
       sources: config.sources || [],
