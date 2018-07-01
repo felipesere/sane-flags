@@ -1,7 +1,7 @@
-const flagPole = require('../index');
+const flagPole = require('../index')
 
 describe('the flag pole', () => {
-  let features;
+  let features
 
   beforeEach(() => {
     features = flagPole.wrap({
@@ -26,39 +26,41 @@ describe('the flag pole', () => {
   })
 
   it('will notify you when asked about unknown features', () => {
-    expect( () => { features.isEnabled('unknown_feature') }).to.throw(
+    expect(() => {
+      features.isEnabled('unknown_feature')
+    }).to.throw(
       "There is no feature named 'unknown_feature'. Check in your features file to see if there was a spelling mistake."
     )
   })
 
   describe('supports external sources', () => {
-    let featuresWithExtraSource;
+    let featuresWithExtraSource
 
-    const naiveSource = (flag) => flag.name === "from_the_naive_source"
+    const naiveSource = (flag) => flag.name === 'from_the_naive_source'
 
     const complexSource = {
-      isEnabled: (flag) => flag.name === "from_the_complex_source"
+      isEnabled: (flag) => flag.name === 'from_the_complex_source'
     }
 
     beforeEach(() => {
       featuresWithExtraSource = flagPole.wrap({
         flags: {
-          from_the_naive_source: {
-          },
+          from_the_naive_source: {},
 
-          from_the_complex_source: {
-          }
+          from_the_complex_source: {}
         },
-       sources: [ naiveSource, complexSource ]
+        sources: [naiveSource, complexSource]
       })
     })
 
     it('as simple functions', () => {
-      expect(featuresWithExtraSource.isEnabled('from_the_naive_source')).to.be.true
+      expect(featuresWithExtraSource.isEnabled('from_the_naive_source')).to.be
+        .true
     })
 
     it('as objects with an isEnabled function', () => {
-      expect(featuresWithExtraSource.isEnabled('from_the_complex_source')).to.be.true
+      expect(featuresWithExtraSource.isEnabled('from_the_complex_source')).to.be
+        .true
     })
   })
 })

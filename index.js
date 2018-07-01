@@ -1,5 +1,5 @@
 const checkSources = (sources, flag) => {
-  for(const source of sources) {
+  for (const source of sources) {
     if (typeof source === 'function' && source(flag)) {
       return true
     }
@@ -17,7 +17,7 @@ module.exports = {
 
       isEnabled: function(flagName) {
         flag = this.flags[flagName]
-        if (flag ) {
+        if (flag) {
           flag.name = flagName
           return flag.enabled || checkSources(this.sources, flag) || false
         } else {

@@ -2,21 +2,28 @@
   "name": "flag-pole",
   "version": "0.0.1",
   "description": "A small library to enable and disable feature flags",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha --require test/setup.js"
-  },
   "keywords": [
     "features",
     "flags"
   ],
   "author": "Felipe Sere <felipesere@gmail.com>",
   "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --require test/setup.js",
+    "prettier": "prettier --write test/*.js index.js"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "arrowParens": "always"
+  },
   "dependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.2.0"
   },
   "devDependencies": {
-    "jscodeshift": "^0.5.1"
+    "jscodeshift": "^0.5.1",
+    "prettier": "1.13.7"
   }
 }
