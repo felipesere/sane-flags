@@ -16,9 +16,9 @@ This will hold all of your configuration and should be imported wherever you wan
 
 Here is an example `features.js` file:
 ```javascript
-import {flagpole} from 'flagpole'
+var flagPole = require('flagPole')
 
-export const features = flagpole.raise({
+var features = flagpole.wrap({
   flags: {
     dynamic_contact_form: {
       description: 'New contact form that dynamically fills form based on accounts contacts.',
@@ -35,10 +35,27 @@ export const features = flagpole.raise({
 When you want to ship a piece of code, without having it really running in production. 
 This makes super sense if you practice continuos integration.
 
-The file containing all your features
+Given the following file containing all your features flags:
 
 ```javascript
+var flagPole = require('flagPole')
+
+module.exports = flagpole.wrap({
+  flags: {
+    dynamic_contact_form: {
+      description: 'New contact form that dynamically fills form based on accounts contacts.',
+      enabled: false
+    }
+  }
+})
+
+You should be able to import that file and check for flags:
+
+```javascript
+var features = require('./features')
+
+if(features.isEnabled('dynamic_contact_form')) {
+  // do something differently...
+}
 
 
-
-```

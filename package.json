@@ -4,12 +4,16 @@
   "description": "A small library to enable and disable feature flags",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require test/setup.js"
   },
   "keywords": [
     "features",
     "flags"
   ],
   "author": "Felipe Sere <felipesere@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  }
 }
