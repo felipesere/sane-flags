@@ -24,4 +24,10 @@ describe('the flag pole', function () {
   it('can check if features are disabled', function() {
     expect(features.isEnabled('disabled_feature')).to.be.false
   })
+
+  it('will notify you when asked about unknown features', function() {
+    expect( function () { features.isEnabled('unknown_feature') }).to.throw(
+      "There is no feature named 'unknown_feature'. Check in your features file to see if there was a spelling mistake."
+    )
+  })
 })

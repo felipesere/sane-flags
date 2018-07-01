@@ -4,7 +4,11 @@ module.exports = {
       flags: config.flags,
       isEnabled: function(flagName) {
         flag = this.flags[flagName]
-        return flag.enabled
+        if (flag ) {
+          return flag.enabled
+        } else {
+          throw `There is no feature named '${flagName}'. Check in your features file to see if there was a spelling mistake.`
+        }
       }
     }
   }
