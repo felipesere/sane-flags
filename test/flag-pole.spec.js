@@ -114,7 +114,19 @@ describe('the flag pole', () => {
         }
       }
 
-      expect(() => flagPole.wrap(config)).to.throw('')
+      expect(() => flagPole.wrap(config)).to.throw('has_no_description')
+    })
+
+    it('...a flag is neither enabled nor disabled', () => {
+      const config = {
+        flags: {
+          is_it_enabled: {
+            description: 'Is this feature really on?'
+          }
+        }
+      }
+
+      expect(() => flagPole.wrap(config)).to.throw('is_it_enabled')
     })
 
     it('...flag is configured for an unknown environment')
