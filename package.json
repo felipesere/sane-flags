@@ -1,0 +1,15 @@
+{
+  "name": "flag-pole",
+  "version": "0.0.1",
+  "description": "A small library to enable and disable feature flags",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "features",
+    "flags"
+  ],
+  "author": "Felipe Sere <felipesere@gmail.com>",
+  "license": "MIT"
+}
