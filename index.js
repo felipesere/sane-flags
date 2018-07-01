@@ -25,5 +25,8 @@ module.exports = {
         }
       }
     }
+  },
+  sources: {
+    processEnvSource: (flag) => process.env[flag.environment_flag]
   }
 }
