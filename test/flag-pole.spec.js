@@ -63,4 +63,35 @@ describe('the flag pole', () => {
         .true
     })
   })
+
+  describe('environments', () => {
+    const features = flagPole.wrap({
+      flags: {
+        enabled_in_dev: {
+          description: 'This feature should only be turned in in development',
+          enabled: {
+            dev: true
+          }
+        },
+        enabled_in_qa: {
+          enabled: {
+            dev: false,
+            qa: true
+          }
+        },
+        always_on: {
+          enabled: true
+        }
+      },
+      environments: {
+        current: 'dev'
+      }
+    })
+
+    it('allow you to have different settings for different environments', () => {
+      expect(features.isEnabled('enabled_in_dev')).to.be.true
+      expect(features.isEnabled('always_on')).to.be.true
+      expect(features.isEnabled('enabled_in_qa')).to.be.false
+    })
+  })
 })
