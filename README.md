@@ -18,7 +18,7 @@ Here is an example `features.js` file:
 ```javascript
 var flagPole = require('flagPole')
 
-var features = flagpole.wrap({
+var features = flagPole.wrap({
   flags: {
     dynamic_contact_form: {
       description: 'New contact form that dynamically fills form based on accounts contacts.',
@@ -40,7 +40,7 @@ Given the following file containing all your features flags:
 ```javascript
 var flagPole = require('flagPole')
 
-module.exports = flagpole.wrap({
+module.exports = flagPole.wrap({
   flags: {
     dynamic_contact_form: {
       description: 'New contact form that dynamically fills form based on accounts contacts.',
@@ -48,6 +48,7 @@ module.exports = flagpole.wrap({
     }
   }
 })
+```
 
 You should be able to import that file and check for flags:
 
@@ -57,6 +58,7 @@ var features = require('./features')
 if(features.isEnabled('dynamic_contact_form')) {
   // do something differently...
 }
+```
 
 ### Hook in alternative sources
 
