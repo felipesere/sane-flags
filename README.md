@@ -58,4 +58,26 @@ if(features.isEnabled('dynamic_contact_form')) {
   // do something differently...
 }
 
+### Hook in alternative sources
 
+Maybe you load a configuration from a remote system or the user can switch flags on and off at runtime.
+For these cases, flag-pole allows you to hook in alternative `sources`.
+These sources can be a simple function that gets a flag definition or an object that has a function called `isEnabled` and takes a flag defintion:
+
+```javascript
+var naiveSource = function(flag) {
+  // some way to define if flag should be on
+}
+
+var complexSource = {
+  isEnabled: function(flag) {
+    // some way to define if flag should be on
+  }
+}
+```
+
+Its important that the entire `flag` object is passed in as an argument.
+This forces you to define those flags and maintain our core principle: make flags explicit.
+It also gives you the flexibility to add any attributues to the flag definition that you need to check them against a source.
+
+See the `process environemnt flag` source.

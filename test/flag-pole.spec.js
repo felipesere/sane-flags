@@ -30,4 +30,39 @@ describe('the flag pole', function () {
       "There is no feature named 'unknown_feature'. Check in your features file to see if there was a spelling mistake."
     )
   })
+
+  describe('supports external sources', function () {
+    var featuresWithExtraSource
+
+    var naiveSource = function(flag) {
+      return flag.name === "from_the_naive_source"
+    }
+
+    var complexSource = {
+      isEnabled: function(flag) {
+        return flag.name === "from_the_complex_source"
+      }
+    }
+
+    beforeEach(function () {
+      featuresWithExtraSource = flagPole.wrap({
+        flags: {
+          from_the_naive_source: {
+          },
+
+          from_the_complex_source: {
+          }
+        },
+       sources: [ naiveSource, complexSource ]
+      })
+    })
+
+    it('as simple functions', function () {
+      expect(featuresWithExtraSource.isEnabled('from_the_naive_source')).to.be.true
+    })
+
+    it('as objects with an isEnabled function', function () {
+      expect(featuresWithExtraSource.isEnabled('from_the_complex_source')).to.be.true
+    })
+  })
 })
