@@ -13,9 +13,20 @@ describe('the flag pole', () => {
         },
 
         disabled_feature: {
-          description: 'The featuer we are working on but have disabled',
+          description: 'The feature we are working on but have disabled',
           enabled: false
+        },
+        cool_feature: {
+          description: 'The feature we are working on but have disabled',
+          enabled: {
+            dev: true,
+            qa: false
+          }
         }
+      },
+      environments: {
+        available: ["dev", "qa"],
+        current: "qa"
       }
     })
   })
@@ -165,5 +176,14 @@ describe('the flag pole', () => {
 
       expect(() => flagPole.wrap(config)).to.throw('anything')
     })
+  })
+
+  it('prints a table of your configuration', () => {
+    const summary = features.summary()
+    //console.log(summary)
+
+    expect(summary).to.contain("dynamic_contact_form")
+    expect(summary).to.contain("disabled_feature")
+    expect(summary).to.match(/cool_feature.*false/)
   })
 })

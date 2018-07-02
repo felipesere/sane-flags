@@ -36,7 +36,7 @@ var features = flagPole.wrap({
 ### Globally turn a feature on or off
 
 When you want to ship a piece of code, without having it really running in production.
-This makes super sense if you practice continuos integration.
+This makes super sense if you practice continuous integration.
 
 Given the following file containing all your features flags:
 

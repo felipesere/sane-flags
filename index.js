@@ -1,3 +1,5 @@
+var AsciiTable = require('ascii-table')
+
 const errors = {
   unknown_feature: (flagName) => `There is no feature named '${flagName}'. Check in your features file to see if there was a spelling mistake.`,
   missing_description: (flagName) => `The feature flag ${flagName} did not have a 'description'. Please ensure you describe a feature flag in a few words to allow fellow engineers to avoid guessing`,
@@ -75,6 +77,16 @@ module.exports = {
         } else {
           throw errors.unknown_feature(flagName)
         }
+      },
+      summary: function() {
+        const table = new AsciiTable('Tracked featurs')
+        table.setHeading('name', 'description', 'enabled?')
+
+        for (const flagName in this.flags) {
+          const flag = this.flags[flagName]
+          table.addRow(flagName, flag.description, this.isEnabled(flagName))
+        }
+        return table.toString()
       }
     }
   },
