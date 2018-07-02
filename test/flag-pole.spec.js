@@ -49,11 +49,14 @@ describe('the flag pole', () => {
       featuresWithExtraSource = flagPole.wrap({
         flags: {
           from_the_naive_source: {
-            description: 'A flag that is enabled by a simple functipon'
+            description: 'A flag that is enabled by a simple functipon',
+            enabled: false
+
           },
 
           from_the_complex_source: {
-            description: 'A flag that is enabled by a complex object'
+            description: 'A flag that is enabled by a complex object',
+            enabled: false
           }
         },
         sources: [naiveSource, complexSource]

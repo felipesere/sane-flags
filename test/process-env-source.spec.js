@@ -4,6 +4,7 @@ describe('the process env source', () => {
   const config = {
     flags: {
       really_cool_feature: {
+        description: 'a feature which will be activated with a process variable',
         enabled: false,
         environment_flag: 'THIS_IS_THE_FLAG'
       }

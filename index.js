@@ -1,3 +1,36 @@
+const checkConsistency = (config) => {
+  for (const flagName in config.flags) {
+    const flag = config.flags[flagName]
+    if (!flag.hasOwnProperty('description')) {
+      throw `The feature flag ${flagName} did not have a 'description'. Please ensure you describe a feature flag in a few words to allow fellow engineers to avoid guessing`
+    }
+
+    for (const flagName in config.flags) {
+      const flag = config.flags[flagName]
+      if (!flag.hasOwnProperty('description')) {
+        throw `The feature flag ${flagName} did not have a 'description'. Please ensure you describe a feature flag in a few words to allow fellow engineers to avoid guessing`
+      }
+
+      if (!flag.hasOwnProperty('enabled')) {
+        throw `The feature flag ${flagName} has no key enabled. It is a healthy practice to make statements about the state of the flag explicit. If you rely on a source to enable it, at least mark it as 'enabled: false' in the config.`
+      }
+
+      if (typeof flag.enabled === 'object') {
+        if (config.environments) {
+          const configuredEnvs = config.environments.available || []
+          for (const envInFlag in flag.enabled) {
+            if (!configuredEnvs.includes(envInFlag)) {
+              throw `The feature flag ${flagName} is configured for ${envInFlag} that is not listed in environments.available: ${configuredEnvs}. Please check if this is an error.`
+            }
+          }
+        } else {
+          throw "You need to configure which environments are available to your application under config.environments.available as an array of strings. This allows us to check your config for consistency"
+        }
+      }
+    }
+  }
+}
+
 const checkSources = (sources, flag) => {
   for (const source of sources) {
     if (typeof source === 'function' && source(flag)) {
@@ -25,29 +58,8 @@ const missing = (flagName) => {
 
 module.exports = {
   wrap: (config) => {
-    for (const flagName in config.flags) {
-      const flag = config.flags[flagName]
-      if (!flag.hasOwnProperty('description')) {
-        throw `The feature flag ${flagName} did not have a 'description'. Please ensure you describe a feature flag in a few words to allow fellow engineers to avoid guessing`
-      }
 
-      if (!flag.hasOwnProperty('enabled')) {
-        throw `The feature flag ${flagName} has no key enabled. It is a healthy practice to make statements about the state of the flag explicit. If you rely on a source to enable it, at least mark it as 'enabled: false' in the config.`
-      }
-
-      if (typeof flag.enabled === 'object') {
-        if (config.environments) {
-          const configuredEnvs = config.environments.available || []
-          for (const envInFlag in flag.enabled) {
-            if (!configuredEnvs.includes(envInFlag)) {
-              throw `The feature flag ${flagName} is configured for ${envInFlag} that is not listed in environments.available: ${configuredEnvs}. Please check if this is an error.`
-            }
-          }
-        } else {
-          throw "You need to configure which environments are available to your application under config.environments.available as an array of strings. This allows us to check your config for consistency"
-        }
-      }
-    }
+    checkConsistency(config)
 
     return {
       flags: config.flags,
