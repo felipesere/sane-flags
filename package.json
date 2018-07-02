@@ -23,7 +23,10 @@
     "mocha": "^5.2.0"
   },
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "jscodeshift": "^0.5.1",
+    "mocha-lcov-reporter": "^1.3.0",
+    "nyc": "^12.0.2",
     "prettier": "1.13.7"
   }
 }
