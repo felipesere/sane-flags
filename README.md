@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/felipesere/flag-pole.svg?branch=master)](https://travis-ci.org/felipesere/flag-pole)
+[![Coverage Status](https://coveralls.io/repos/github/felipesere/flag-pole/badge.svg?branch=master)](https://coveralls.io/github/felipesere/flag-pole?branch=master)
 
 # Welcome to `Flag Pole`
 
