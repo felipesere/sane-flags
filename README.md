@@ -84,7 +84,7 @@ Its important that the entire `flag` object is passed in as an argument.
 This forces you to define those flags and maintain our core principle: make flags explicit.
 It also gives you the flexibility to add any attributues to the flag definition that you need to check them against a source.
 
-See the `process environemnt flag` source.
+See the [process environemnt flag](#flags-from-process-environemnt) source.
 
 ### Handling different environments
 
