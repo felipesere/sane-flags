@@ -115,13 +115,63 @@ module.exports = flagPole.wrap({
 To be able to ensure consistency, any key underneath `enabled` must be present in `environments.available`.
 Using `process.env.APPLICATION_ENV` is just an example here.
 
-
-## Consistency
+## Consistency and Explicitness
 
 `flag-pole` is fairly strict in what it expects to see in your configuration.
 Every flag MUST have a `description` and an `enabled` key.
 To use the per-environemnt configuration of enabled, you MUST declare the available environments in the `environments` key.
 Failure to do so will throw an error when calling `wrap(config)` to avoid odd behaviour and enforce good practices as far as possible.
+
+
+## Insight
+
+In the spirit of being explicit `flag-pole` is able to give you an ASCII table 
+showing which features are enabled/disabled:
+
+Given:
+```javascript
+features = flagPole.wrap({
+  flags: {
+    dynamic_contact_form: {
+      description:
+        'The new form that fills in form contacts from the current account',
+      enabled: true
+    },
+
+    disabled_feature: {
+      description: 'The feature we are working on but have disabled',
+      enabled: false
+    },
+    cool_feature: {
+      description: 'The feature we are working on but have disabled',
+      enabled: {
+        dev: true,
+        qa: false
+      }
+    }
+  },
+  environments: {
+    available: ["dev", "qa"],
+    current: "qa"
+  }
+})
+```
+
+Then calling `features.summary()` will give you a little table like this:
+
+```
+.-----------------------------------------------------------------------------------------------------.
+|                                           Tracked featurs                                           |
+|-----------------------------------------------------------------------------------------------------|
+|         name         |                            description                            | enabled? |
+|----------------------|-------------------------------------------------------------------|----------|
+| dynamic_contact_form | The new form that fills in form contacts from the current account | true     |
+| disabled_feature     | The feature we are working on but have disabled                   | false    |
+| cool_feature         | The feature we are working on but have disabled                   | false    |
+'-----------------------------------------------------------------------------------------------------'
+```
+
+
 
 ## Feature flags and tests
 
