@@ -186,4 +186,34 @@ describe('the flag pole', () => {
     expect(summary).to.contain("disabled_feature")
     expect(summary).to.match(/cool_feature.*false/)
   })
+
+  describe('supports tests by...', () => {
+    it('...temporariliy enabling features', () => {
+      features.enabling('disabled_feature', () => {
+        expect(features.isEnabled('disabled_feature')).to.eql(true)
+      })
+      expect(features.isEnabled('disabled_feature')).to.eql(false)
+    })
+
+    it('...resetting feature when exceptions happen', () => {
+      expect(() =>
+        features.enabling('disabled_feature', () => {
+          throw Error('this should not have happend')
+        })
+      ).to.throw()
+      expect(features.isEnabled('disabled_feature')).to.eql(false)
+    })
+
+    it('...temporarily enabling features around async functions', async () => {
+      let wasItEnabled
+      let someFunctionHere = async () => features.isEnabled('disabled_feature')
+
+      await features.enablingAsync('disabled_feature', async () => {
+        wasItEnabled = await someFunctionHere()
+      })
+
+      expect(wasItEnabled).to.eql(true)
+      expect(features.isEnabled('disabled_feature')).to.eql(false)
+    })
+  })
 })

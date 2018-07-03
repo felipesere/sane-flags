@@ -123,6 +123,31 @@ Every flag MUST have a `description` and an `enabled` key.
 To use the per-environemnt configuration of enabled, you MUST declare the available environments in the `environments` key.
 Failure to do so will throw an error when calling `wrap(config)` to avoid odd behaviour and enforce good practices as far as possible.
 
+## Feature flags and tests
+
+While developing a new feature that is hidden behind a flag, it makes sense to temporarliy switch it on for specific unit tests.
+`flag-pole` provides to helper functions that take a closure  in which a certain flag can be enabled.
+Once the closure is complete, `flag-pole` will disable the feature again to ensure there is no test pollution.
+
+Here are examples directly from the test suite:
+
+Synchronous:
+```javascript
+features.enabling('disabled_feature', () => {
+  expect(features.isEnabled('disabled_feature')).to.eql(true)
+})
+expect(features.isEnabled('disabled_feature')).to.eql(false)
+```
+
+Async/Await:
+```javascript
+await features.enablingAsync('disabled_feature', async () => {
+  wasItEnabled = await someFunctionHere()
+})
+```
+
+Should your closure throw an exception then `flag-pole` will correctly disable the feature again and rethrow the error.
+
 ## Extras
 
 ### Flags from process environemnt

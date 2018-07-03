@@ -78,6 +78,7 @@ module.exports = {
           throw errors.unknown_feature(flagName)
         }
       },
+
       summary: function() {
         const table = new AsciiTable('Tracked featurs')
         table.setHeading('name', 'description', 'enabled?')
@@ -87,7 +88,29 @@ module.exports = {
           table.addRow(flagName, flag.description, this.isEnabled(flagName))
         }
         return table.toString()
-      }
+      },
+
+      enabling: function(flagName, closure) {
+        const oldFlagValue = this.isEnabled(flagName)
+        this.flags[flagName].enabled = true
+
+        try {
+          return closure()
+        } finally {
+          this.flags[flagName].enabled = oldFlagValue
+        }
+      },
+
+      enablingAsync: async function(flagName, closure) {
+        const oldFlagValue = this.isEnabled(flagName)
+        this.flags[flagName].enabled = true
+
+        try {
+          return await closure()
+        } finally {
+          this.flags[flagName].enabled = oldFlagValue
+        }
+      },
     }
   },
   sources: {
