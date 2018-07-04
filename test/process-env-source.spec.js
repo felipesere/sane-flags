@@ -1,4 +1,4 @@
-const flagPole = require('../index')
+const whiteFlag = require('../index')
 
 describe('the process env source', () => {
   const config = {
@@ -9,11 +9,11 @@ describe('the process env source', () => {
         environment_flag: 'THIS_IS_THE_FLAG'
       }
     },
-    sources: [flagPole.sources.processEnvSource]
+    sources: [whiteFlag.sources.processEnvSource]
   }
 
   it("enables flags based on the 'environment_flag' key", () => {
-    features = flagPole.wrap(config)
+    features = whiteFlag.wrap(config)
 
     process.env['THIS_IS_THE_FLAG'] = 1
     expect(features.isEnabled('really_cool_feature')).to.be.true

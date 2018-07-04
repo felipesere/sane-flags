@@ -1,9 +1,9 @@
 [![Build Status](https://travis-ci.org/felipesere/flag-pole.svg?branch=master)](https://travis-ci.org/felipesere/flag-pole)
 [![Coverage Status](https://coveralls.io/repos/github/felipesere/flag-pole/badge.svg?branch=master)](https://coveralls.io/github/felipesere/flag-pole?branch=master)
 
-# Welcome to `Flag Pole`
+# Welcome to `White-Flag`
 
-Flag pole is a small, focused library to add feature flags to your JavaScript application.
+White flag is a small, focused library to add feature flags to your JavaScript application.
 
 ## Be Explicit
 
@@ -19,9 +19,9 @@ This will hold all of your configuration and should be imported wherever you wan
 
 Here is an example `features.js` file:
 ```javascript
-var flagPole = require('flag-pole')
+var whiteFlag = require('white-flag')
 
-var features = flagPole.wrap({
+var features = whiteFlag.wrap({
   flags: {
     dynamic_contact_form: {
       description: 'New contact form that dynamically fills form based on accounts contacts.',
@@ -41,9 +41,9 @@ This makes super sense if you practice continuous integration.
 Given the following file containing all your features flags:
 
 ```javascript
-var flagPole = require('flag-pole')
+var whiteFlag = require('white-flag')
 
-module.exports = flagPole.wrap({
+module.exports = whiteFlag.wrap({
   flags: {
     dynamic_contact_form: {
       description: 'New contact form that dynamically fills form based on accounts contacts.',
@@ -66,7 +66,7 @@ if(features.isEnabled('dynamic_contact_form')) {
 ### Hook into alternative sources
 
 Maybe you load a configuration from a remote system or the user can switch flags on and off at runtime.
-For these cases, flag-pole allows you to hook in alternative `sources`.
+For these cases, white-flag allows you to hook in alternative `sources`.
 These sources can be a simple function that gets a flag definition or an object that has a function called `isEnabled` and takes a flag defintion:
 
 ```javascript
@@ -82,7 +82,7 @@ var complexSource = {
 ```
 
 ```javascript
-module.exports = flagPole.wrap({
+module.exports = whiteFlag.wrap({
   flags: {
     dynamic_contact_form: {
       description: 'New contact form that dynamically fills form based on accounts contacts.',
@@ -102,11 +102,11 @@ See the [process environemnt flag](#flags-from-process-environemnt) source.
 ### Handling different environments
 
 Sometimes you want to have features enabled in lower environments but keep them off in others.
-For such cases, `flag-pole` supports an `environments` key in the configuration and more complex values for `enabled`.
+For such cases, `white-flag` supports an `environments` key in the configuration and more complex values for `enabled`.
 In the spirit of our explicit configuration, you will have to list all available environemnts and declare which one you are in:
 
 ```javascript
-module.exports = flagPole.wrap({
+module.exports = whiteFlag.wrap({
   flags: {
     dynamic_contact_form: {
       description: 'New contact form that dynamically fills form based on accounts contacts.',
@@ -129,7 +129,7 @@ Using `process.env.APPLICATION_ENV` is just an example here.
 
 ## Consistency and Explicitness
 
-`flag-pole` is fairly strict in what it expects to see in your configuration.
+`white-flag` is fairly strict in what it expects to see in your configuration.
 Every flag MUST have a `description` and an `enabled` key.
 To use the per-environemnt configuration of enabled, you MUST declare the available environments in the `environments` key.
 Failure to do so will throw an error when calling `wrap(config)` to avoid odd behaviour and enforce good practices as far as possible.
@@ -137,12 +137,12 @@ Failure to do so will throw an error when calling `wrap(config)` to avoid odd be
 
 ## Insight
 
-In the spirit of being explicit `flag-pole` is able to give you an ASCII table 
+In the spirit of being explicit `white-flag` is able to give you an ASCII table 
 showing which features are enabled/disabled:
 
 Given:
 ```javascript
-features = flagPole.wrap({
+features = whiteFlag.wrap({
   flags: {
     dynamic_contact_form: {
       description:
@@ -188,8 +188,8 @@ Then calling `features.summary()` will give you a little table like this:
 ## Feature flags and tests
 
 While developing a new feature that is hidden behind a flag, it makes sense to temporarliy switch it on for specific unit tests.
-`flag-pole` provides to helper functions that take a closure  in which a certain flag can be enabled.
-Once the closure is complete, `flag-pole` will disable the feature again to ensure there is no test pollution.
+`white-flag` provides to helper functions that take a closure  in which a certain flag can be enabled.
+Once the closure is complete, `white-flag` will disable the feature again to ensure there is no test pollution.
 
 Here are examples directly from the test suite:
 
@@ -208,16 +208,16 @@ await features.enablingAsync('disabled_feature', async () => {
 })
 ```
 
-Should your closure throw an exception then `flag-pole` will correctly disable the feature again and rethrow the error.
+Should your closure throw an exception then `white-flag` will correctly disable the feature again and rethrow the error.
 
 ## Extras
 
 ### Flags from process environemnt
 
-If you want to enable flags using the process environemnt, you can hook in the source provided by `flag-pole` and configure the flags with an extra property `environment_flag`:
+If you want to enable flags using the process environemnt, you can hook in the source provided by `white-flag` and configure the flags with an extra property `environment_flag`:
 
 ```javascript
-const features = flagPole.wrap({
+const features = whiteFlag.wrap({
   flags: {
     really_cool_feature: {
       description: 'a feature which will be activated with a process variable',
@@ -225,7 +225,7 @@ const features = flagPole.wrap({
       environment_flag: 'THIS_IS_THE_FLAG'
     }
   },
-  sources: [flagPole.sources.processEnvSource]
+  sources: [whiteFlag.sources.processEnvSource]
 })
 ```
 

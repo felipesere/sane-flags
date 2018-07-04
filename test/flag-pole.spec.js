@@ -1,10 +1,10 @@
-const flagPole = require('../index')
+const whiteFlag = require('../index')
 
-describe('the flag pole', () => {
+describe('the white flag', () => {
   let features
 
   beforeEach(() => {
-    features = flagPole.wrap({
+    features = whiteFlag.wrap({
       flags: {
         dynamic_contact_form: {
           description:
@@ -57,7 +57,7 @@ describe('the flag pole', () => {
     }
 
     beforeEach(() => {
-      featuresWithExtraSource = flagPole.wrap({
+      featuresWithExtraSource = whiteFlag.wrap({
         flags: {
           from_the_naive_source: {
             description: 'A flag that is enabled by a simple functipon',
@@ -86,7 +86,7 @@ describe('the flag pole', () => {
   })
 
   describe('environments', () => {
-    const features = flagPole.wrap({
+    const features = whiteFlag.wrap({
       flags: {
         enabled_in_dev: {
           description: 'This feature should only be turned in in development',
@@ -129,7 +129,7 @@ describe('the flag pole', () => {
         }
       }
 
-      expect(() => flagPole.wrap(config)).to.throw('has_no_description')
+      expect(() => whiteFlag.wrap(config)).to.throw('has_no_description')
     })
 
     it('...a flag is neither enabled nor disabled', () => {
@@ -141,7 +141,7 @@ describe('the flag pole', () => {
         }
       }
 
-      expect(() => flagPole.wrap(config)).to.throw('is_it_enabled')
+      expect(() => whiteFlag.wrap(config)).to.throw('is_it_enabled')
     })
 
     it('...multiple environments are not listed as available', () => {
@@ -156,7 +156,7 @@ describe('the flag pole', () => {
         }
       }
 
-      expect(() => flagPole.wrap(config)).to.throw('You need to configure which environments')
+      expect(() => whiteFlag.wrap(config)).to.throw('You need to configure which environments')
     })
 
     it('...a flag is configured for an unexpected environment', () => {
@@ -174,7 +174,7 @@ describe('the flag pole', () => {
         }
       }
 
-      expect(() => flagPole.wrap(config)).to.throw('anything')
+      expect(() => whiteFlag.wrap(config)).to.throw('anything')
     })
   })
 
