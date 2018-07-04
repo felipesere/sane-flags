@@ -3,7 +3,7 @@
 
 # Welcome to `Flag Pole`
 
-Flag pole is a small, focused library to add feature flags to your application.
+Flag pole is a small, focused library to add feature flags to your JavaScript application.
 
 ## Be Explicit
 
