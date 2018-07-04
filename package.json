@@ -1,5 +1,5 @@
 {
-  "name": "white-flag",
+  "name": "sane-flags",
   "version": "0.0.1",
   "description": "A small library for feature flags with explicitness in mind",
   "keywords": [

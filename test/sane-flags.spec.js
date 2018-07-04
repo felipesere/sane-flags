@@ -1,10 +1,10 @@
-const whiteFlag = require('../index')
+const saneFlags = require('../index')
 
-describe('the white flag', () => {
+describe('the sane flags', () => {
   let features
 
   beforeEach(() => {
-    features = whiteFlag.wrap({
+    features = saneFlags.wrap({
       flags: {
         dynamic_contact_form: {
           description:
@@ -57,7 +57,7 @@ describe('the white flag', () => {
     }
 
     beforeEach(() => {
-      featuresWithExtraSource = whiteFlag.wrap({
+      featuresWithExtraSource = saneFlags.wrap({
         flags: {
           from_the_naive_source: {
             description: 'A flag that is enabled by a simple functipon',
@@ -86,7 +86,7 @@ describe('the white flag', () => {
   })
 
   describe('environments', () => {
-    const features = whiteFlag.wrap({
+    const features = saneFlags.wrap({
       flags: {
         enabled_in_dev: {
           description: 'This feature should only be turned in in development',
@@ -129,7 +129,7 @@ describe('the white flag', () => {
         }
       }
 
-      expect(() => whiteFlag.wrap(config)).to.throw('has_no_description')
+      expect(() => saneFlags.wrap(config)).to.throw('has_no_description')
     })
 
     it('...a flag is neither enabled nor disabled', () => {
@@ -141,7 +141,7 @@ describe('the white flag', () => {
         }
       }
 
-      expect(() => whiteFlag.wrap(config)).to.throw('is_it_enabled')
+      expect(() => saneFlags.wrap(config)).to.throw('is_it_enabled')
     })
 
     it('...multiple environments are not listed as available', () => {
@@ -156,7 +156,7 @@ describe('the white flag', () => {
         }
       }
 
-      expect(() => whiteFlag.wrap(config)).to.throw('You need to configure which environments')
+      expect(() => saneFlags.wrap(config)).to.throw('You need to configure which environments')
     })
 
     it('...a flag is configured for an unexpected environment', () => {
@@ -174,7 +174,7 @@ describe('the white flag', () => {
         }
       }
 
-      expect(() => whiteFlag.wrap(config)).to.throw('anything')
+      expect(() => saneFlags.wrap(config)).to.throw('anything')
     })
   })
 
