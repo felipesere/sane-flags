@@ -4,7 +4,9 @@
   "description": "A small library for feature flags with explicitness in mind",
   "keywords": [
     "features",
-    "flags"
+    "flags",
+    "switch",
+    "toggle"
   ],
   "author": "Felipe Sere <felipesere@gmail.com>",
   "license": "MIT",
