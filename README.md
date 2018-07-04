@@ -81,6 +81,18 @@ var complexSource = {
 }
 ```
 
+```javascript
+module.exports = flagPole.wrap({
+  flags: {
+    dynamic_contact_form: {
+      description: 'New contact form that dynamically fills form based on accounts contacts.',
+      enabled: false
+    }
+  },
+  sources: [complexSource]
+})
+```
+
 Its important that the entire `flag` object is passed in as an argument.
 This forces you to define those flags and maintain our core principle: make flags explicit.
 It also gives you the flexibility to add any attributues to the flag definition that you need to check them against a source.
