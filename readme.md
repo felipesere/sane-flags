@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/felipesere/flag-pole.svg?branch=master)](https://travis-ci.org/felipesere/flag-pole)
-[![Coverage Status](https://coveralls.io/repos/github/felipesere/flag-pole/badge.svg?branch=master)](https://coveralls.io/github/felipesere/flag-pole?branch=master)
+[![Build Status](https://travis-ci.org/felipesere/sane-flags.svg?branch=master)](https://travis-ci.org/felipesere/sane-flags)
+[![Coverage Status](https://coveralls.io/repos/github/felipesere/sane-flags/badge.svg?branch=master)](https://coveralls.io/github/felipesere/sane-flags?branch=master)
 
 # Welcome to `Sane Flags`
 
