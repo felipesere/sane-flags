@@ -1,11 +1,16 @@
 var AsciiTable = require('ascii-table')
 
 const errors = {
-  unknown_feature: (flagName) => `There is no feature named '${flagName}'. Check in your features file to see if there was a spelling mistake.`,
-  missing_description: (flagName) => `The feature flag ${flagName} did not have a 'description'. Please ensure you describe a feature flag in a few words to allow fellow engineers to avoid guessing`,
-  missing_enabled: (flagName) => `The feature flag ${flagName} has no key 'enabled'. It is a healthy practice to make statements about the state of the flag explicit. If you rely on a source to enable it, at least mark it as 'enabled: false' in the config.`,
-  unknown_env_enabled: (flagName, envInFlag, configuredEnvs) => `The feature flag ${flagName} is configured for ${envInFlag} that is not listed in environments.available: ${configuredEnvs}. Please check if this is an error.`,
-  missing_environment: () => "You need to configure which environments are available to your application under config.environments.available as an array of strings. This allows us to check your config for consistency"
+  unknown_feature: (flagName) =>
+    `There is no feature named '${flagName}'. Check in your features file to see if there was a spelling mistake.`,
+  missing_description: (flagName) =>
+    `The feature flag ${flagName} did not have a 'description'. Please ensure you describe a feature flag in a few words to allow fellow engineers to avoid guessing`,
+  missing_enabled: (flagName) =>
+    `The feature flag ${flagName} has no key 'enabled'. It is a healthy practice to make statements about the state of the flag explicit. If you rely on a source to enable it, at least mark it as 'enabled: false' in the config.`,
+  unknown_env_enabled: (flagName, envInFlag, configuredEnvs) =>
+    `The feature flag ${flagName} is configured for ${envInFlag} that is not listed in environments.available: ${configuredEnvs}. Please check if this is an error.`,
+  missing_environment: () =>
+    'You need to configure which environments are available to your application under config.environments.available as an array of strings. This allows us to check your config for consistency'
 }
 
 const checkConsistency = (config) => {
@@ -24,7 +29,11 @@ const checkConsistency = (config) => {
         const configuredEnvs = config.environments.available || []
         for (const envInFlag in flag.enabled) {
           if (!configuredEnvs.includes(envInFlag)) {
-            throw errors.unknown_env_enabled(flagName, envInFlag, configuredEnvs)
+            throw errors.unknown_env_enabled(
+              flagName,
+              envInFlag,
+              configuredEnvs
+            )
           }
         }
       } else {
@@ -57,7 +66,6 @@ const hardEnabled = (environments, flag) => {
 
 module.exports = {
   wrap: (config) => {
-
     checkConsistency(config)
 
     return {
@@ -110,7 +118,7 @@ module.exports = {
         } finally {
           this.flags[flagName].enabled = oldFlagValue
         }
-      },
+      }
     }
   },
   sources: {

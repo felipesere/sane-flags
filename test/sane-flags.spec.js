@@ -25,8 +25,8 @@ describe('the sane flags', () => {
         }
       },
       environments: {
-        available: ["dev", "qa"],
-        current: "qa"
+        available: ['dev', 'qa'],
+        current: 'qa'
       }
     })
   })
@@ -62,7 +62,6 @@ describe('the sane flags', () => {
           from_the_naive_source: {
             description: 'A flag that is enabled by a simple functipon',
             enabled: false
-
           },
 
           from_the_complex_source: {
@@ -156,7 +155,9 @@ describe('the sane flags', () => {
         }
       }
 
-      expect(() => saneFlags.wrap(config)).to.throw('You need to configure which environments')
+      expect(() => saneFlags.wrap(config)).to.throw(
+        'You need to configure which environments'
+      )
     })
 
     it('...a flag is configured for an unexpected environment', () => {
@@ -182,8 +183,8 @@ describe('the sane flags', () => {
     const summary = features.summary()
     //console.log(summary)
 
-    expect(summary).to.contain("dynamic_contact_form")
-    expect(summary).to.contain("disabled_feature")
+    expect(summary).to.contain('dynamic_contact_form')
+    expect(summary).to.contain('disabled_feature')
     expect(summary).to.match(/cool_feature.*false/)
   })
 
