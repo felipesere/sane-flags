@@ -99,13 +99,13 @@ Its important that the entire `flag` object is passed in as an argument.
 This forces you to define those flags and maintain our core principle: make flags explicit.
 It also gives you the flexibility to add any attributues to the flag definition that you need to check them against a source.
 
-See the [process environemnt flag](#flags-from-process-environemnt) source.
+See the [process environment flag](#flags-from-process-environment) source.
 
 ### Handling different environments
 
 Sometimes you want to have features enabled in lower environments but keep them off in others.
 For such cases, `sane-flags` supports an `environments` key in the configuration and more complex values for `enabled`.
-In the spirit of our explicit configuration, you will have to list all available environemnts and declare which one you are in:
+In the spirit of our explicit configuration, you will have to list all available environments and declare which one you are in:
 
 ```javascript
 module.exports = saneFlags.wrap({
@@ -133,13 +133,13 @@ Using `process.env.APPLICATION_ENV` is just an example here.
 
 `sane-flags` is fairly strict in what it expects to see in your configuration.
 Every flag MUST have a `description` and an `enabled` key.
-To use the per-environemnt configuration of enabled, you MUST declare the available environments in the `environments` key.
+To use the per-environment configuration of enabled, you MUST declare the available environments in the `environments` key.
 Failure to do so will throw an error when calling `wrap(config)` to avoid odd behaviour and enforce good practices as far as possible.
 
 
 ## Insight
 
-In the spirit of being explicit `sane-flags` is able to give you an ASCII table 
+In the spirit of being explicit `sane-flags` is able to give you an ASCII table
 showing which features are enabled/disabled:
 
 Given:
@@ -214,9 +214,9 @@ Should your closure throw an exception then `sane-flags` will correctly disable 
 
 ## Extras
 
-### Flags from process environemnt
+### Flags from process environment
 
-If you want to enable flags using the process environemnt, you can hook in the source provided by `sane-flags` and configure the flags with an extra property `environment_flag`:
+If you want to enable flags using the process environment, you can hook in the source provided by `sane-flags` and configure the flags with an extra property `environment_flag`:
 
 ```javascript
 const features = saneFlags.wrap({
@@ -231,4 +231,4 @@ const features = saneFlags.wrap({
 })
 ```
 
-Using a separate key to name the process environemnt flag to look for ensures your feature names are not coupled to a naming convention from the processes.
+Using a separate key to name the process environment flag to look for ensures your feature names are not coupled to a naming convention from the processes.
