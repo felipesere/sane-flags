@@ -122,6 +122,9 @@ module.exports = {
     }
   },
   sources: {
-    processEnvSource: (flag) => process.env[flag.environment_flag]
+    processEnvSource: (flag) => {
+      const value = process.env[flag.environment_flag]
+      return value === '1' || value === 'true'
+    }
   }
 }

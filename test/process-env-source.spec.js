@@ -13,12 +13,30 @@ describe('the process env source', () => {
     sources: [saneFlags.sources.processEnvSource]
   }
 
-  it("enables flags based on the 'environment_flag' key", () => {
-    features = saneFlags.wrap(config)
+  const features = saneFlags.wrap(config)
 
-    process.env['THIS_IS_THE_FLAG'] = 1
-    expect(features.isEnabled('really_cool_feature')).to.be.true
-    delete process.env['THIS_IS_THE_FLAG']
-    expect(features.isEnabled('really_cool_feature')).to.be.false
-  })
+  const settings = [
+    { value: 1, expect_to_be: 'enabled' },
+    { value: true, expect_to_be: 'enabled' },
+    { value: 0, expect_to_be: 'disabled' },
+    { value: false, expect_to_be: 'disabled' }
+  ]
+
+  for (const { value, expect_to_be } of settings) {
+    it(`treats a value of ${value} as '${expect_to_be}'`, () => {
+      const expectation = (n) => n === (expect_to_be === 'enabled')
+
+      set('THIS_IS_THE_FLAG', { is: value }, () => {
+        expect(features.isEnabled('really_cool_feature')).to.satisfy(
+          expectation
+        )
+      })
+    })
+  }
 })
+
+const set = (flag, { is: value }, closure) => {
+  process.env[flag] = value
+  closure()
+  delete process.env[flag]
+}
