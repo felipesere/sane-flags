@@ -16,6 +16,10 @@ describe('the sane flags', () => {
           description: 'The feature we are working on but have disabled',
           enabled: false
         },
+        enabled_feature: {
+          description: 'This is on',
+          enabled: true
+        },
         cool_feature: {
           description: 'The feature we are working on but have disabled',
           enabled: {
@@ -191,6 +195,7 @@ describe('the sane flags', () => {
     expect(features.state()).to.have.deep.members([
       {name: 'dynamic_contact_form', enabled: true},
       {name: 'disabled_feature', enabled: false},
+      {name: 'enabled_feature', enabled: true},
       {name: 'cool_feature', enabled: false}
     ])
   })
@@ -201,6 +206,13 @@ describe('the sane flags', () => {
         expect(features.isEnabled('disabled_feature')).to.eql(true)
       })
       expect(features.isEnabled('disabled_feature')).to.eql(false)
+    })
+
+    it('...temporariliy disabling features', () => {
+      features.disabling('enabled_feature', () => {
+        expect(features.isEnabled('enabled_feature')).to.eql(false)
+      })
+      expect(features.isEnabled('enabled_feature')).to.eql(true)
     })
 
     it('...resetting feature when exceptions happen', () => {
@@ -222,6 +234,18 @@ describe('the sane flags', () => {
 
       expect(wasItEnabled).to.eql(true)
       expect(features.isEnabled('disabled_feature')).to.eql(false)
+    })
+
+    it('...temporarily disabling features around async functions', async () => {
+      let wasItDisabled
+      let someFunctionHere = async () => features.isEnabled('enabled_feature')
+
+      await features.disablingAsync('enabled_feature', async () => {
+        wasItEnabled = await someFunctionHere()
+      })
+
+      expect(wasItEnabled).to.eql(false)
+      expect(features.isEnabled('enabled_feature')).to.eql(true)
     })
   })
 })

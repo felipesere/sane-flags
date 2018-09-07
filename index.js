@@ -105,22 +105,39 @@ module.exports = {
       },
 
       enabling: function(flagName, closure) {
-        const oldFlagValue = this.isEnabled(flagName)
-        this.flags[flagName].enabled = true
+        this.__toggle(flagName, closure, true)
+      },
 
-        try {
-          return closure()
-        } finally {
-          this.flags[flagName].enabled = oldFlagValue
-        }
+      disabling: function(flagName, closure) {
+        this.__toggle(flagName, closure, false)
       },
 
       enablingAsync: async function(flagName, closure) {
+        this.__toggle(
+          flagName,
+          async () => {
+            await closure()
+          },
+          true
+        )
+      },
+
+      disablingAsync: async function(flagName, closure) {
+        this.__toggle(
+          flagName,
+          async () => {
+            await closure()
+          },
+          false
+        )
+      },
+
+      __toggle: function(flagName, closure, value) {
         const oldFlagValue = this.isEnabled(flagName)
-        this.flags[flagName].enabled = true
+        this.flags[flagName].enabled = value
 
         try {
-          return await closure()
+          return closure()
         } finally {
           this.flags[flagName].enabled = oldFlagValue
         }
