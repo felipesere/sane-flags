@@ -123,25 +123,7 @@ module.exports = {
   wrap: (config) => {
     checkConsistency(config)
 
-    return {
-      feature_flags: new FeatureFlags(config),
-
-      isEnabled: function(flagName) {
-        return this.feature_flags.isEnabled(flagName)
-      },
-
-      summary: function() {
-        return this.feature_flags.summary()
-      },
-
-      enabling: function(flagName, closure) {
-        return this.feature_flags.enabling(flagName, closure)
-      },
-
-      enablingAsync: async function(flagName, closure) {
-        return await this.feature_flags.enablingAsync(flagName, closure)
-      }
-    }
+    return new FeatureFlags(config)
   },
   sources: {
     processEnvSource: (flag) => {
