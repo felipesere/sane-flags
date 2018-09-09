@@ -64,60 +64,82 @@ const hardEnabled = (environments, flag) => {
   }
 }
 
+class FeatureFlags {
+  constructor(config) {
+    this.flags = config.flags
+    this.environments = config.environments || false
+    this.sources = config.sources || []
+  }
+
+  isEnabled(flagName) {
+    let flag = this.flags[flagName]
+    if (flag) {
+      flag.name = flagName
+      return (
+        hardEnabled(this.environments, flag) ||
+        checkSources(this.sources, flag) ||
+        false
+      )
+    } else {
+      throw errors.unknown_feature(flagName)
+    }
+  }
+
+  enabling(flagName, closure) {
+    const oldFlagValue = this.isEnabled(flagName)
+    this.flags[flagName].enabled = true
+
+    try {
+      return closure()
+    } finally {
+      this.flags[flagName].enabled = oldFlagValue
+    }
+  }
+
+  async enablingAsync(flagName, closure) {
+    const oldFlagValue = this.isEnabled(flagName)
+    this.flags[flagName].enabled = true
+
+    try {
+      return await closure()
+    } finally {
+      this.flags[flagName].enabled = oldFlagValue
+    }
+  }
+
+  summary() {
+    const table = new AsciiTable('Tracked featurs')
+    table.setHeading('name', 'description', 'enabled?')
+
+    for (const flagName in this.flags) {
+      const flag = this.flags[flagName]
+      table.addRow(flagName, flag.description, this.isEnabled(flagName))
+    }
+    return table.toString()
+  }
+}
+
 module.exports = {
   wrap: (config) => {
     checkConsistency(config)
 
     return {
-      flags: config.flags,
-      sources: config.sources || [],
-      environments: config.environments || false,
+      feature_flags: new FeatureFlags(config),
 
       isEnabled: function(flagName) {
-        flag = this.flags[flagName]
-        if (flag) {
-          flag.name = flagName
-          return (
-            hardEnabled(this.environments, flag) ||
-            checkSources(this.sources, flag) ||
-            false
-          )
-        } else {
-          throw errors.unknown_feature(flagName)
-        }
+        return this.feature_flags.isEnabled(flagName)
       },
 
       summary: function() {
-        const table = new AsciiTable('Tracked featurs')
-        table.setHeading('name', 'description', 'enabled?')
-
-        for (const flagName in this.flags) {
-          const flag = this.flags[flagName]
-          table.addRow(flagName, flag.description, this.isEnabled(flagName))
-        }
-        return table.toString()
+        return this.feature_flags.summary()
       },
 
       enabling: function(flagName, closure) {
-        const oldFlagValue = this.isEnabled(flagName)
-        this.flags[flagName].enabled = true
-
-        try {
-          return closure()
-        } finally {
-          this.flags[flagName].enabled = oldFlagValue
-        }
+        return this.feature_flags.enabling(flagName, closure)
       },
 
       enablingAsync: async function(flagName, closure) {
-        const oldFlagValue = this.isEnabled(flagName)
-        this.flags[flagName].enabled = true
-
-        try {
-          return await closure()
-        } finally {
-          this.flags[flagName].enabled = oldFlagValue
-        }
+        return await this.feature_flags.enablingAsync(flagName, closure)
       }
     }
   },
