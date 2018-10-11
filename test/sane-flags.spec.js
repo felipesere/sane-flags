@@ -181,11 +181,18 @@ describe('the sane flags', () => {
 
   it('prints a table of your configuration', () => {
     const summary = features.summary()
-    //console.log(summary)
 
     expect(summary).to.contain('dynamic_contact_form')
     expect(summary).to.contain('disabled_feature')
     expect(summary).to.match(/cool_feature.*false/)
+  })
+
+  it('presents the state of all available features', () => {
+    expect(features.state()).to.have.deep.members([
+      {name: 'dynamic_contact_form', enabled: true},
+      {name: 'disabled_feature', enabled: false},
+      {name: 'cool_feature', enabled: false}
+    ])
   })
 
   describe('supports tests by...', () => {

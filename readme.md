@@ -185,6 +185,12 @@ Then calling `features.summary()` will give you a little table like this:
 '-----------------------------------------------------------------------------------------------------'
 ```
 
+If you need programatic access to the current state of the feature flags, you can call `.state()` resulting in
+
+```
+features.state() // => [{name: 'dynamic_contact_form', enabled: true}, {name: 'disabled_feature', enabled: false}, ... ]
+```
+
 
 
 ## Feature flags and tests

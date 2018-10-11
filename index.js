@@ -98,6 +98,12 @@ module.exports = {
         return table.toString()
       },
 
+      state: function() {
+        return Object.keys(this.flags).map(flagName => {
+          return {name: flagName, enabled: this.isEnabled(flagName)}
+        })
+      },
+
       enabling: function(flagName, closure) {
         const oldFlagValue = this.isEnabled(flagName)
         this.flags[flagName].enabled = true
