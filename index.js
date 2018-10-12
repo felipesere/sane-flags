@@ -99,8 +99,8 @@ module.exports = {
       },
 
       state: function() {
-        return Object.keys(this.flags).map(flagName => {
-          return {name: flagName, enabled: this.isEnabled(flagName)}
+        return Object.keys(this.flags).map((flagName) => {
+          return { name: flagName, enabled: this.isEnabled(flagName) }
         })
       },
 
