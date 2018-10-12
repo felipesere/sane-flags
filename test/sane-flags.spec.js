@@ -259,5 +259,19 @@ describe('the sane flags', () => {
       expect(wasItEnabled).to.eql(false)
       expect(features.isEnabled('enabled_feature')).to.eql(true)
     })
+
+    it('...allowing you to enable and disable multiple features at once', () => {
+      const box = features.testBox()
+      box.enable('disabled_feature')
+      box.disable('enabled_feature')
+
+      expect(features.isEnabled('disabled_feature')).to.eql(true)
+      expect(features.isEnabled('enabled_feature')).to.eql(false)
+
+      box.reset()
+
+      expect(features.isEnabled('disabled_feature')).to.eql(false)
+      expect(features.isEnabled('enabled_feature')).to.eql(true)
+    })
   })
 })

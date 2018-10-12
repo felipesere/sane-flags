@@ -218,6 +218,24 @@ await features.enablingAsync('disabled_feature', async () => {
 
 Should your closure throw an exception then `sane-flags` will correctly disable the feature again and rethrow the error.
 
+There will be times where you either want to enable/disable combinations of features, possible across multiple tests.
+For that case there is a `testBox` inspired by Sinons `sandbox`.
+You can enable/disable multiple features on a `testBox` and reset them all at once:
+
+```javascript
+const box = features.testBox()
+box.enable('disabled_feature')
+box.disable('enabled_feature')
+
+expect(features.isEnabled('disabled_feature')).to.eql(true)
+expect(features.isEnabled('enabled_feature')).to.eql(false)
+
+box.reset()
+
+expect(features.isEnabled('disabled_feature')).to.eql(false)
+expect(features.isEnabled('enabled_feature')).to.eql(true)
+```
+
 ## Extras
 
 ### Flags from process environment

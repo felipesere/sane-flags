@@ -140,6 +140,30 @@ module.exports = {
         } finally {
           this.flags[flagName].enabled = oldFlagValue
         }
+      },
+
+      testBox: function() {
+        const features = this
+        let changedFlags = []
+        return {
+          enable: function(flagName) {
+            const isEnabled = features.isEnabled(flagName)
+            changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
+            features.flags[flagName].enabled = true
+          },
+
+          disable: function(flagName) {
+            const isEnabled = features.isEnabled(flagName)
+            changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
+            features.flags[flagName].enabled = false
+          },
+
+          reset: function() {
+            for (const {flag, originalValue} of changedFlags) {
+              features.flags[flag].enabled = originalValue
+            }
+          }
+        }
       }
     }
   },
