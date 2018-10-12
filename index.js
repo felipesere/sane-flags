@@ -105,31 +105,19 @@ module.exports = {
       },
 
       enabling: function(flagName, closure) {
-        this.__toggle(flagName, closure, true)
+        return this.__toggle(flagName, closure, true)
       },
 
       disabling: function(flagName, closure) {
-        this.__toggle(flagName, closure, false)
+        return this.__toggle(flagName, closure, false)
       },
 
       enablingAsync: async function(flagName, closure) {
-        this.__toggle(
-          flagName,
-          async () => {
-            await closure()
-          },
-          true
-        )
+        return this.__toggleAsync(flagName, closure, true)
       },
 
       disablingAsync: async function(flagName, closure) {
-        this.__toggle(
-          flagName,
-          async () => {
-            await closure()
-          },
-          false
-        )
+        return this.__toggle(flagName, closure, false)
       },
 
       __toggle: function(flagName, closure, value) {
@@ -138,6 +126,17 @@ module.exports = {
 
         try {
           return closure()
+        } finally {
+          this.flags[flagName].enabled = oldFlagValue
+        }
+      },
+
+      __toggleAsync: async function(flagName, closure, value) {
+        const oldFlagValue = this.isEnabled(flagName)
+        this.flags[flagName].enabled = value
+
+        try {
+          return await closure()
         } finally {
           this.flags[flagName].enabled = oldFlagValue
         }

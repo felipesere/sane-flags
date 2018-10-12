@@ -224,13 +224,25 @@ describe('the sane flags', () => {
       expect(features.isEnabled('disabled_feature')).to.eql(false)
     })
 
+    it('...resetting features when exceptions happen async code', async () => {
+      await expect(
+        features.enablingAsync('disabled_feature', () => {
+          throw new Error('this shoudl bubble up')
+        })
+      ).to.eventually.be.rejected
+
+      expect(features.isEnabled('disabled_feature')).to.eql(false)
+    })
+
     it('...temporarily enabling features around async functions', async () => {
       let wasItEnabled
       let someFunctionHere = async () => features.isEnabled('disabled_feature')
 
-      await features.enablingAsync('disabled_feature', async () => {
-        wasItEnabled = await someFunctionHere()
-      })
+      await expect(
+        features.enablingAsync('disabled_feature', async () => {
+          wasItEnabled = await someFunctionHere()
+        })
+      ).to.eventually.be.fulfilled
 
       expect(wasItEnabled).to.eql(true)
       expect(features.isEnabled('disabled_feature')).to.eql(false)
