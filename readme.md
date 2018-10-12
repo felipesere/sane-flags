@@ -240,3 +240,8 @@ const features = saneFlags.wrap({
 Using a separate key to name the process environment flag to look for ensures your feature names are not coupled to a naming convention from the processes.
 
 Flags will be enabled if the environment varibale has a value of '1' or 'true'.
+
+
+## Making a new release.
+
+Use `npx np`. That simple.
