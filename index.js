@@ -67,14 +67,14 @@ const hardEnabled = (environments, flag) => {
 module.exports = {
   wrap: (config) => {
     checkConsistency(config)
+    const flags = config.flags
 
     return {
-      flags: config.flags,
       sources: config.sources || [],
       environments: config.environments || false,
 
       isEnabled: function(flagName) {
-        flag = this.flags[flagName]
+        flag = flags[flagName]
         if (flag) {
           flag.name = flagName
           return (
@@ -91,16 +91,16 @@ module.exports = {
         const table = new AsciiTable('Tracked featurs')
         table.setHeading('name', 'description', 'enabled?')
 
-        for (const flagName in this.flags) {
-          const flag = this.flags[flagName]
+        for (const flagName in flags) {
+          const flag = flags[flagName]
           table.addRow(flagName, flag.description, this.isEnabled(flagName))
         }
         return table.toString()
       },
 
       state: function() {
-        return Object.keys(this.flags).map((flagName) => {
-          return { name: flagName, enabled: this.isEnabled(flagName), description: this.flags[flagName].description }
+        return Object.keys(flags).map((flagName) => {
+          return { name: flagName, enabled: this.isEnabled(flagName), description: flags[flagName].description }
         })
       },
 
@@ -122,23 +122,23 @@ module.exports = {
 
       __toggle: function(flagName, closure, value) {
         const oldFlagValue = this.isEnabled(flagName)
-        this.flags[flagName].enabled = value
+        flags[flagName].enabled = value
 
         try {
           return closure()
         } finally {
-          this.flags[flagName].enabled = oldFlagValue
+          flags[flagName].enabled = oldFlagValue
         }
       },
 
       __toggleAsync: async function(flagName, closure, value) {
         const oldFlagValue = this.isEnabled(flagName)
-        this.flags[flagName].enabled = value
+        flags[flagName].enabled = value
 
         try {
           return await closure()
         } finally {
-          this.flags[flagName].enabled = oldFlagValue
+          flags[flagName].enabled = oldFlagValue
         }
       },
 
@@ -149,18 +149,18 @@ module.exports = {
           enable: function(flagName) {
             const isEnabled = features.isEnabled(flagName)
             changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
-            features.flags[flagName].enabled = true
+            flags[flagName].enabled = true
           },
 
           disable: function(flagName) {
             const isEnabled = features.isEnabled(flagName)
             changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
-            features.flags[flagName].enabled = false
+            flags[flagName].enabled = false
           },
 
           reset: function() {
             for (const {flag, originalValue} of changedFlags) {
-              features.flags[flag].enabled = originalValue
+              flags[flag].enabled = originalValue
             }
           }
         }
