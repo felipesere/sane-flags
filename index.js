@@ -142,23 +142,22 @@ module.exports = {
       testBox: function() {
         const features = this
         let changedFlags = []
+
+        const set = (flagName, {to: value}) => {
+          const isEnabled = features.isEnabled(flagName)
+          changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
+          flags[flagName].enabled = value
+        }
+
         return {
-          enable: function(flagName) {
-            const isEnabled = features.isEnabled(flagName)
-            changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
-            flags[flagName].enabled = true
-          },
+          enable: (flagName) => set(flagName, {to: true}),
 
-          disable: function(flagName) {
-            const isEnabled = features.isEnabled(flagName)
-            changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
-            flags[flagName].enabled = false
-          },
+          disable: (flagName) => set(flagName, {to: false}),
 
-          reset: function() {
-            for (const {flag, originalValue} of changedFlags) {
-              flags[flag].enabled = originalValue
-            }
+          reset: () => {
+            changedFlags.forEach(({flag, originalValue}) => flags[flag].enabled = originalValue )
+
+            changedFlags = []
           }
         }
       }
