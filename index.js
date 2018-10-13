@@ -116,7 +116,7 @@ module.exports = {
       },
 
       disablingAsync: async function(flagName, closure) {
-        return this.__toggle(flagName, closure, false)
+        return this.__toggleAsync(flagName, closure, false)
       },
 
       __toggle: function(flagName, closure, value) {
