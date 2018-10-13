@@ -71,6 +71,28 @@ module.exports = {
     const sources = config.sources || []
     const environments = config.environments || false
 
+    const toggle  = (self, flagName, closure, value) => {
+      const oldFlagValue = self.isEnabled(flagName)
+      flags[flagName].enabled = value
+
+      try {
+        return closure()
+      } finally {
+        flags[flagName].enabled = oldFlagValue
+      }
+    }
+
+    const toggleAsync = async (self, flagName, closure, value) => {
+        const oldFlagValue = self.isEnabled(flagName)
+        flags[flagName].enabled = value
+
+        try {
+          return await closure()
+        } finally {
+          flags[flagName].enabled = oldFlagValue
+        }
+      }
+
     return {
       isEnabled: function(flagName) {
         flag = flags[flagName]
@@ -104,41 +126,19 @@ module.exports = {
       },
 
       enabling: function(flagName, closure) {
-        return this.__toggle(flagName, closure, true)
+        return toggle(this, flagName, closure, true)
       },
 
       disabling: function(flagName, closure) {
-        return this.__toggle(flagName, closure, false)
+        return toggle(this, flagName, closure, false)
       },
 
       enablingAsync: async function(flagName, closure) {
-        return this.__toggleAsync(flagName, closure, true)
+        return toggleAsync(this, flagName, closure, true)
       },
 
       disablingAsync: async function(flagName, closure) {
-        return this.__toggleAsync(flagName, closure, false)
-      },
-
-      __toggle: function(flagName, closure, value) {
-        const oldFlagValue = this.isEnabled(flagName)
-        flags[flagName].enabled = value
-
-        try {
-          return closure()
-        } finally {
-          flags[flagName].enabled = oldFlagValue
-        }
-      },
-
-      __toggleAsync: async function(flagName, closure, value) {
-        const oldFlagValue = this.isEnabled(flagName)
-        flags[flagName].enabled = value
-
-        try {
-          return await closure()
-        } finally {
-          flags[flagName].enabled = oldFlagValue
-        }
+        return toggleAsync(this, flagName, closure, false)
       },
 
       testBox: function() {
