@@ -68,18 +68,17 @@ module.exports = {
   wrap: (config) => {
     checkConsistency(config)
     const flags = config.flags
+    const sources = config.sources || []
+    const environments = config.environments || false
 
     return {
-      sources: config.sources || [],
-      environments: config.environments || false,
-
       isEnabled: function(flagName) {
         flag = flags[flagName]
         if (flag) {
           flag.name = flagName
           return (
-            hardEnabled(this.environments, flag) ||
-            checkSources(this.sources, flag) ||
+            hardEnabled(environments, flag) ||
+            checkSources(sources, flag) ||
             false
           )
         } else {
