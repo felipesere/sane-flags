@@ -67,11 +67,9 @@ const hardEnabled = (environments, flag) => {
 module.exports = {
   wrap: (config) => {
     checkConsistency(config)
-    const flags = config.flags
-    const sources = config.sources || []
-    const environments = config.environments || false
+    const {flags, sources = [], environments = false } = config
 
-    const toggle  = (self, flagName, closure, value) => {
+    const toggle  = (self, flagName, {to: value, around: closure}) => {
       const oldFlagValue = self.isEnabled(flagName)
       flags[flagName].enabled = value
 
@@ -82,7 +80,7 @@ module.exports = {
       }
     }
 
-    const toggleAsync = async (self, flagName, closure, value) => {
+    const toggleAsync = async (self, flagName, {to: value, around: closure}) => {
         const oldFlagValue = self.isEnabled(flagName)
         flags[flagName].enabled = value
 
@@ -126,19 +124,19 @@ module.exports = {
       },
 
       enabling: function(flagName, closure) {
-        return toggle(this, flagName, closure, true)
+        return toggle(this, flagName, {to: true, around: closure})
       },
 
       disabling: function(flagName, closure) {
-        return toggle(this, flagName, closure, false)
+        return toggle(this, flagName, {to: false, around: closure})
       },
 
       enablingAsync: async function(flagName, closure) {
-        return toggleAsync(this, flagName, closure, true)
+        return toggleAsync(this, flagName, {to: true, around: closure})
       },
 
       disablingAsync: async function(flagName, closure) {
-        return toggleAsync(this, flagName, closure, false)
+        return toggleAsync(this, flagName, {to: false, around: closure})
       },
 
       testBox: function() {
