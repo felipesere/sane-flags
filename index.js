@@ -67,9 +67,9 @@ const hardEnabled = (environments, flag) => {
 module.exports = {
   wrap: (config) => {
     checkConsistency(config)
-    const {flags, sources = [], environments = false } = config
+    const { flags, sources = [], environments = false } = config
 
-    const toggle  = (self, flagName, {to: value, around: closure}) => {
+    const toggle = (self, flagName, { to: value, around: closure }) => {
       const oldFlagValue = self.isEnabled(flagName)
       flags[flagName].enabled = value
 
@@ -80,16 +80,20 @@ module.exports = {
       }
     }
 
-    const toggleAsync = async (self, flagName, {to: value, around: closure}) => {
-        const oldFlagValue = self.isEnabled(flagName)
-        flags[flagName].enabled = value
+    const toggleAsync = async (
+      self,
+      flagName,
+      { to: value, around: closure }
+    ) => {
+      const oldFlagValue = self.isEnabled(flagName)
+      flags[flagName].enabled = value
 
-        try {
-          return await closure()
-        } finally {
-          flags[flagName].enabled = oldFlagValue
-        }
+      try {
+        return await closure()
+      } finally {
+        flags[flagName].enabled = oldFlagValue
       }
+    }
 
     return {
       isEnabled: function(flagName) {
@@ -119,43 +123,52 @@ module.exports = {
 
       state: function() {
         return Object.keys(flags).map((flagName) => {
-          return { name: flagName, enabled: this.isEnabled(flagName), description: flags[flagName].description }
+          return {
+            name: flagName,
+            enabled: this.isEnabled(flagName),
+            description: flags[flagName].description
+          }
         })
       },
 
       enabling: function(flagName, closure) {
-        return toggle(this, flagName, {to: true, around: closure})
+        return toggle(this, flagName, { to: true, around: closure })
       },
 
       disabling: function(flagName, closure) {
-        return toggle(this, flagName, {to: false, around: closure})
+        return toggle(this, flagName, { to: false, around: closure })
       },
 
       enablingAsync: async function(flagName, closure) {
-        return toggleAsync(this, flagName, {to: true, around: closure})
+        return toggleAsync(this, flagName, { to: true, around: closure })
       },
 
       disablingAsync: async function(flagName, closure) {
-        return toggleAsync(this, flagName, {to: false, around: closure})
+        return toggleAsync(this, flagName, { to: false, around: closure })
       },
 
       testBox: function() {
         const features = this
         let changedFlags = []
 
-        const set = (flagName, {to: value}) => {
+        const set = (flagName, { to: value }) => {
           const isEnabled = features.isEnabled(flagName)
-          changedFlags = changedFlags.concat({flag: flagName, originalValue: isEnabled})
+          changedFlags = changedFlags.concat({
+            flag: flagName,
+            originalValue: isEnabled
+          })
           flags[flagName].enabled = value
         }
 
         return {
-          enable: (flagName) => set(flagName, {to: true}),
+          enable: (flagName) => set(flagName, { to: true }),
 
-          disable: (flagName) => set(flagName, {to: false}),
+          disable: (flagName) => set(flagName, { to: false }),
 
           reset: () => {
-            changedFlags.forEach(({flag, originalValue}) => flags[flag].enabled = originalValue )
+            changedFlags.forEach(
+              ({ flag, originalValue }) => (flags[flag].enabled = originalValue)
+            )
 
             changedFlags = []
           }
