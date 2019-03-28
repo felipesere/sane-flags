@@ -1,7 +1,8 @@
-const saneFlags = require('../index')
+import { Config, Flag, saneFlags, Wrapped } from '..'
+import {expect} from 'chai'
 
 describe('the sane flags', () => {
-  let features
+  let features: Wrapped
 
   beforeEach(() => {
     features = saneFlags.wrap({
@@ -54,10 +55,10 @@ describe('the sane flags', () => {
   describe('supports external sources', () => {
     let featuresWithExtraSource
 
-    const naiveSource = (flag) => flag.name === 'from_the_naive_source'
+    const naiveSource = (flag: Flag) => flag.name === 'from_the_naive_source'
 
     const complexSource = {
-      isEnabled: (flag) => flag.name === 'from_the_complex_source'
+      isEnabled: (flag: Flag) => flag.name === 'from_the_complex_source'
     }
 
     beforeEach(() => {
@@ -89,7 +90,7 @@ describe('the sane flags', () => {
   })
 
   describe('environments', () => {
-    const features = saneFlags.wrap({
+    const features: Wrapped = saneFlags.wrap({
       flags: {
         enabled_in_dev: {
           description: 'This feature should only be turned in in development',
@@ -124,7 +125,7 @@ describe('the sane flags', () => {
 
   describe('fails with a consistency error when...', () => {
     it('...a flag is missing a description', () => {
-      const config = {
+      const config: Config = {
         flags: {
           has_no_description: {
             enabled: true
@@ -136,7 +137,7 @@ describe('the sane flags', () => {
     })
 
     it('...a flag is neither enabled nor disabled', () => {
-      const config = {
+      const config: Config = {
         flags: {
           is_it_enabled: {
             description: 'Is this feature really on?'
@@ -148,7 +149,7 @@ describe('the sane flags', () => {
     })
 
     it('...multiple environments are not listed as available', () => {
-      const config = {
+      const config: Config = {
         flags: {
           anything: {
             description: 'We dont know odd or dev yet',
@@ -165,7 +166,7 @@ describe('the sane flags', () => {
     })
 
     it('...a flag is configured for an unexpected environment', () => {
-      const config = {
+      const config: Config = {
         flags: {
           anything: {
             description: 'We dont know odd or dev yet',
@@ -204,6 +205,7 @@ describe('the sane flags', () => {
     it('...temporariliy enabling features', () => {
       features.enabling('disabled_feature', () => {
         expect(features.isEnabled('disabled_feature')).to.eql(true)
+        return true
       })
       expect(features.isEnabled('disabled_feature')).to.eql(false)
     })
@@ -211,6 +213,7 @@ describe('the sane flags', () => {
     it('...temporariliy disabling features', () => {
       features.disabling('enabled_feature', () => {
         expect(features.isEnabled('enabled_feature')).to.eql(false)
+        return true
       })
       expect(features.isEnabled('enabled_feature')).to.eql(true)
     })
@@ -241,6 +244,7 @@ describe('the sane flags', () => {
       await expect(
         features.enablingAsync('disabled_feature', async () => {
           wasItEnabled = await someFunctionHere()
+          return wasItEnabled
         })
       ).to.eventually.be.fulfilled
 

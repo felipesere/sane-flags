@@ -1,4 +1,4 @@
-const saneFlags = require('../index')
+const saneFlags = require('..')
 
 describe('the process env source', () => {
   const config = {
