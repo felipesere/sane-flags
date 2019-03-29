@@ -21,12 +21,13 @@
     "arrowParens": "always"
   },
   "dependencies": {
-    "@types/node": "^11.12.0",
     "ascii-table": "0.0.9"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.6",
+    "@types/node": "^11.12.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.0.0",
     "coveralls": "^3.0.3",

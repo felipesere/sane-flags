@@ -1,4 +1,5 @@
-const AsciiTable = require('ascii-table')
+// @ts-ignore
+import AsciiTable from 'ascii-table'
 
 const errors = {
   unknown_feature: (flagName: string) =>
@@ -50,10 +51,10 @@ export type Wrapped = {
   isEnabled: (k: string) => boolean,
   summary: () => string,
   state: () => State,
-  enabling<RESULT>(name: string, closure: () => RESULT):  RESULT
-  disabling<RESULT>(name: string, closure: () => RESULT):  RESULT
-  enablingAsync<RESULT>(name: string, closure: () => Promise<RESULT>): Promise<RESULT>
-  disablingAsync<RESULT>(name: string, closure: () => Promise<RESULT>): Promise<RESULT>
+  enabling: <TResult>(name: string, closure: () => TResult) =>  TResult
+  disabling: <TResult>(name: string, closure: () => TResult) =>  TResult
+  enablingAsync: <TResult>(name: string, closure: () => Promise<TResult>) => Promise<TResult>
+  disablingAsync: <TResult>(name: string, closure: () => Promise<TResult>) => Promise<TResult>
   testBox: () => TestBox,
 }
 
@@ -107,12 +108,14 @@ const hardEnabled = (environments: CurrentEnvironment | undefined, flag: Flag) =
   }
 }
 
+type ToggledFlag<TResult> = Readonly<{to: boolean, around: () => TResult}>
+
 export let saneFlags = {
   wrap: (config: Config): Wrapped => {
     checkConsistency(config)
     const { flags, sources = [], environments } = config
 
-    function toggle<RESULT>(self: Wrapped, flagName: string, { to: value, around: closure }: {to: boolean, around: () => RESULT}): RESULT  {
+    const toggle = <TResult>(self: Wrapped, flagName: string, { to: value, around: closure }: ToggledFlag<TResult>): TResult => {
       const oldFlagValue = self.isEnabled(flagName)
       flags[flagName].enabled = value
 
@@ -123,7 +126,7 @@ export let saneFlags = {
       }
     }
 
-    const toggleAsync = async function<RES>(self: Wrapped, flagName: string, { to: value , around: closure }: {to: boolean, around: () => Promise<RES>} ): Promise<RES> {
+    const toggleAsync = async <TResult>(self: Wrapped, flagName: string, { to: value , around: closure }: ToggledFlag<Promise<TResult>> ): Promise<TResult> => {
       const oldFlagValue = self.isEnabled(flagName)
       flags[flagName].enabled = value
 

@@ -1,7 +1,8 @@
-const saneFlags = require('..')
+import { Config, saneFlags } from '..'
+import {expect} from 'chai'
 
 describe('the process env source', () => {
-  const config = {
+  const config: Config = {
     flags: {
       really_cool_feature: {
         description:
@@ -24,7 +25,7 @@ describe('the process env source', () => {
 
   for (const { value, expect_to_be } of settings) {
     it(`treats a value of ${value} as '${expect_to_be}'`, () => {
-      const expectation = (n) => n === (expect_to_be === 'enabled')
+      const expectation = (n: boolean) => n === (expect_to_be === 'enabled')
 
       set('THIS_IS_THE_FLAG', { is: value }, () => {
         expect(features.isEnabled('really_cool_feature')).to.satisfy(
@@ -35,8 +36,9 @@ describe('the process env source', () => {
   }
 })
 
-const set = (flag, { is: value }, closure) => {
-  process.env[flag] = value
+const set = (flag: string, { is: value }: {is: boolean | number}, closure: () => void) => {
+  const env = process.env as {[k: string]:string}
+  env[flag] = value.toString()
   closure()
   delete process.env[flag]
 }
