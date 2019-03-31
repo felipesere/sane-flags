@@ -18,7 +18,7 @@ type DirectLyEnabled = boolean
 type EnabledEnvironments = { [k: string]: boolean }
 export type Flag = {enabled: DirectLyEnabled | EnabledEnvironments, description: string, name?: string }
 
-type Flags = {[k: string]: Flag}
+type Flags = {[l:string]:Flag}
 
 type CurrentEnvironment = Readonly<{current: string }>
 type AvailableEnvironments = string[];
@@ -28,11 +28,12 @@ type FlagWithEnvironment = Readonly<{
   environment_flag: string
 }>
 
-export type Config = Readonly<{
+
+export interface Config {
   flags: Flags,
   environments?: Environments,
   sources?: Source[]
-}>
+}
 
 type SourceFn = (flag: Flag) => boolean
 type SourceObject = Readonly<{isEnabled: SourceFn}>
@@ -41,20 +42,23 @@ type Source = SourceFn | SourceObject
 type State = Flag[]
 type ChangedFlag = {flag: string, originalValue: boolean}
 
-type TestBox = {
+interface TestBox {
   enable: (flag: string) => void
   disable: (flag: string) => void
   reset: () => void
 }
 
-export type Wrapped = {
+type SyncTogglingClosure = <TResult>(name: string, closure: () => TResult) =>  TResult
+type AsyncTogglingClosure = <TResult>(name: string, closure: () => Promise<TResult>) => Promise<TResult>
+
+export interface FeatureFlags {
   isEnabled: (k: string) => boolean,
   summary: () => string,
   state: () => State,
-  enabling: <TResult>(name: string, closure: () => TResult) =>  TResult
-  disabling: <TResult>(name: string, closure: () => TResult) =>  TResult
-  enablingAsync: <TResult>(name: string, closure: () => Promise<TResult>) => Promise<TResult>
-  disablingAsync: <TResult>(name: string, closure: () => Promise<TResult>) => Promise<TResult>
+  enabling: SyncTogglingClosure
+  disabling:SyncTogglingClosure
+  enablingAsync: AsyncTogglingClosure
+  disablingAsync: AsyncTogglingClosure
   testBox: () => TestBox,
 }
 
@@ -95,8 +99,6 @@ const checkSources = (sources: Source[], flag: Flag) => {
   }
 }
 
-
-
 const hardEnabled = (environments: CurrentEnvironment | undefined, flag: Flag) => {
   if (typeof flag.enabled === 'boolean') {
     return flag.enabled
@@ -110,12 +112,12 @@ const hardEnabled = (environments: CurrentEnvironment | undefined, flag: Flag) =
 
 type ToggledFlag<TResult> = Readonly<{to: boolean, around: () => TResult}>
 
-export let saneFlags = {
-  wrap: (config: Config): Wrapped => {
+export const saneFlags = {
+  wrap: (config: Config): FeatureFlags => {
     checkConsistency(config)
     const { flags, sources = [], environments } = config
 
-    const toggle = <TResult>(self: Wrapped, flagName: string, { to: value, around: closure }: ToggledFlag<TResult>): TResult => {
+    const toggle = <TResult>(self: FeatureFlags, flagName: string, { to: value, around: closure }: ToggledFlag<TResult>): TResult => {
       const oldFlagValue = self.isEnabled(flagName)
       flags[flagName].enabled = value
 
@@ -126,7 +128,7 @@ export let saneFlags = {
       }
     }
 
-    const toggleAsync = async <TResult>(self: Wrapped, flagName: string, { to: value , around: closure }: ToggledFlag<Promise<TResult>> ): Promise<TResult> => {
+    const toggleAsync = async <TResult>(self: FeatureFlags, flagName: string, { to: value , around: closure }: ToggledFlag<Promise<TResult>> ): Promise<TResult> => {
       const oldFlagValue = self.isEnabled(flagName)
       flags[flagName].enabled = value
 
@@ -138,7 +140,7 @@ export let saneFlags = {
     }
 
     return {
-      isEnabled: function(flagName) {
+      isEnabled: (flagName: string) => {
         const flag = flags[flagName]
         if (flag) {
           flag.name = flagName
@@ -153,18 +155,19 @@ export let saneFlags = {
       },
 
       summary: function() {
-        const table = new AsciiTable('Tracked featurs')
+        const self: FeatureFlags = this;
+        const table = new AsciiTable('Tracked features')
         table.setHeading('name', 'description', 'enabled?')
 
         for (const flagName in flags) {
           const flag = flags[flagName]
-          table.addRow(flagName, flag.description, this.isEnabled(flagName))
+          table.addRow(flagName, flag.description, self.isEnabled(flagName))
         }
         return table.toString()
       },
 
       state: function() {
-        const features: Wrapped = this
+        const features: FeatureFlags = this
         return Object.keys(flags).map((flagName) => {
           return {
             name: flagName,
@@ -191,7 +194,7 @@ export let saneFlags = {
       },
 
       testBox: function() {
-        const features: Wrapped = this
+        const features: FeatureFlags = this
         let changedFlags: ChangedFlag[] = []
         const set = (flagName: string, { to: value }: {to: boolean}) => {
           const isEnabled = features.isEnabled(flagName)

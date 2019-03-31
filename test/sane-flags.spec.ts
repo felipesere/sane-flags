@@ -1,8 +1,8 @@
-import { Config, Flag, saneFlags, Wrapped } from '..'
-import {expect} from 'chai'
+import { Config, FeatureFlags, Flag, saneFlags } from '..'
+import { expect } from 'chai'
 
 describe('the sane flags', () => {
-  let features: Wrapped
+  let features: FeatureFlags
 
   beforeEach(() => {
     features = saneFlags.wrap({
@@ -53,7 +53,7 @@ describe('the sane flags', () => {
   })
 
   describe('supports external sources', () => {
-    let featuresWithExtraSource: Wrapped
+    let featuresWithExtraSource: FeatureFlags
 
     const naiveSource = (flag: Flag) => flag.name === 'from_the_naive_source'
 
@@ -90,7 +90,7 @@ describe('the sane flags', () => {
   })
 
   describe('environments', () => {
-    const features: Wrapped = saneFlags.wrap({
+    const features: FeatureFlags = saneFlags.wrap({
       flags: {
         enabled_in_dev: {
           description: 'This feature should only be turned in in development',
