@@ -1,5 +1,7 @@
 // @ts-ignore
 import AsciiTable from 'ascii-table'
+import { Flag } from './index'
+import { Key } from 'readline'
 
 const errors = {
   unknown_feature: (flagName: string) =>
@@ -18,8 +20,6 @@ type DirectLyEnabled = boolean
 type EnabledEnvironments = { [k: string]: boolean }
 export type Flag = {enabled: DirectLyEnabled | EnabledEnvironments, description: string, name?: string }
 
-type Flags = {[l:string]:Flag}
-
 type CurrentEnvironment = Readonly<{current: string }>
 type AvailableEnvironments = string[];
 type Environments = Readonly<{available: AvailableEnvironments} & CurrentEnvironment>
@@ -30,7 +30,7 @@ type FlagWithEnvironment = Readonly<{
 
 
 export interface Config {
-  flags: Flags,
+  flags: { [key: string]: Flag },
   environments?: Environments,
   sources?: Source[]
 }
@@ -40,26 +40,26 @@ type SourceObject = Readonly<{isEnabled: SourceFn}>
 type Source = SourceFn | SourceObject
 
 type State = Flag[]
-type ChangedFlag = {flag: string, originalValue: boolean}
+type ChangedFlag<K> = {flag: K, originalValue: boolean}
 
-interface TestBox {
-  enable: (flag: string) => void
-  disable: (flag: string) => void
+interface TestBox<K> {
+  enable: (flag: K) => void
+  disable: (flag: K) => void
   reset: () => void
 }
 
-type SyncTogglingClosure = <TResult>(name: string, closure: () => TResult) =>  TResult
-type AsyncTogglingClosure = <TResult>(name: string, closure: () => Promise<TResult>) => Promise<TResult>
+type SyncTogglingClosure<Keys> = <TResult>(name: Keys, closure: () => TResult) =>  TResult
+type AsyncTogglingClosure<Keys> = <TResult>(name: Keys, closure: () => Promise<TResult>) => Promise<TResult>
 
-export interface FeatureFlags {
-  isEnabled: (k: string) => boolean,
+export interface FeatureFlags<TConfig extends Config, TFlagName extends keyof TConfig["flags"]> {
+  isEnabled: (key: TFlagName) => boolean,
   summary: () => string,
   state: () => State,
-  enabling: SyncTogglingClosure
-  disabling:SyncTogglingClosure
-  enablingAsync: AsyncTogglingClosure
-  disablingAsync: AsyncTogglingClosure
-  testBox: () => TestBox,
+  enabling: SyncTogglingClosure<TFlagName>
+  disabling:SyncTogglingClosure<TFlagName>
+  enablingAsync: AsyncTogglingClosure<TFlagName>
+  disablingAsync: AsyncTogglingClosure<TFlagName>
+  testBox: () => TestBox<TFlagName>,
 }
 
 const checkConsistency = (config: Config) => {
@@ -113,71 +113,71 @@ const hardEnabled = (environments: CurrentEnvironment | undefined, flag: Flag) =
 type ToggledFlag<TResult> = Readonly<{to: boolean, around: () => TResult}>
 
 export const saneFlags = {
-  wrap: (config: Config): FeatureFlags => {
+  wrap: <C extends Config, TFlagName extends keyof C["flags"]>(config: C): FeatureFlags<C, TFlagName> => {
     checkConsistency(config)
     const { flags, sources = [], environments } = config
 
-    const toggle = <TResult>(self: FeatureFlags, flagName: string, { to: value, around: closure }: ToggledFlag<TResult>): TResult => {
+    const toggle = <TResult>(self: FeatureFlags<C, TFlagName>, flagName: TFlagName, { to: value, around: closure }: ToggledFlag<TResult>): TResult => {
       const oldFlagValue = self.isEnabled(flagName)
-      flags[flagName].enabled = value
+      flags[flagName as string].enabled = value
 
       try {
         return closure()
       } finally {
-        flags[flagName].enabled = oldFlagValue
+        flags[flagName as string].enabled = oldFlagValue
       }
     }
 
-    const toggleAsync = async <TResult>(self: FeatureFlags, flagName: string, { to: value , around: closure }: ToggledFlag<Promise<TResult>> ): Promise<TResult> => {
+    const toggleAsync = async <TResult>(self: FeatureFlags<C, TFlagName>, flagName: TFlagName, { to: value , around: closure }: ToggledFlag<Promise<TResult>> ): Promise<TResult> => {
       const oldFlagValue = self.isEnabled(flagName)
-      flags[flagName].enabled = value
+      flags[flagName as string].enabled = value
 
       try {
         return await closure()
       } finally {
-        flags[flagName].enabled = oldFlagValue
+        flags[flagName as string].enabled = oldFlagValue
       }
     }
 
     return {
-      isEnabled: (flagName: string) => {
-        const flag = flags[flagName]
+      isEnabled: (flagName: TFlagName) => {
+        const flag = flags[flagName as string]
         if (flag) {
-          flag.name = flagName
+          flag.name = flagName as string
           return (
             hardEnabled(environments, flag) ||
             checkSources(sources, flag) ||
             false
           )
         } else {
-          throw errors.unknown_feature(flagName)
+          throw errors.unknown_feature(flagName as string)
         }
       },
 
       summary: function() {
-        const self: FeatureFlags = this;
+        const self: FeatureFlags<C, TFlagName> = this;
         const table = new AsciiTable('Tracked features')
         table.setHeading('name', 'description', 'enabled?')
 
         for (const flagName in flags) {
           const flag = flags[flagName]
-          table.addRow(flagName, flag.description, self.isEnabled(flagName))
+          table.addRow(flagName, flag.description, self.isEnabled(flagName as any))
         }
         return table.toString()
       },
 
       state: function() {
-        const features: FeatureFlags = this
+        const features: FeatureFlags<C, TFlagName> = this
         return Object.keys(flags).map((flagName) => {
           return {
             name: flagName,
-            enabled: features.isEnabled(flagName),
+            enabled: features.isEnabled(flagName as any),
             description: flags[flagName].description
           }
         })
       },
 
-      enabling: function(flagName, closure) {
+      enabling: function(flagName: TFlagName, closure) {
         return toggle(this, flagName, { to: true, around: closure })
       },
 
@@ -194,21 +194,21 @@ export const saneFlags = {
       },
 
       testBox: function() {
-        const features: FeatureFlags = this
-        let changedFlags: ChangedFlag[] = []
-        const set = (flagName: string, { to: value }: {to: boolean}) => {
+        const features: FeatureFlags<C, TFlagName> = this
+        let changedFlags: ChangedFlag<TFlagName>[] = []
+        const set = (flagName: TFlagName, { to: value }: {to: boolean}) => {
           const isEnabled = features.isEnabled(flagName)
           changedFlags = changedFlags.concat({
             flag: flagName,
             originalValue: isEnabled
           })
-          flags[flagName].enabled = value
+          flags[flagName as string].enabled = value
         }
 
         return {
-          enable: (flagName) => set(flagName, { to: true }),
+          enable: (flagName: TFlagName) => set(flagName, { to: true }),
 
-          disable: (flagName) => set(flagName, { to: false }),
+          disable: (flagName: TFlagName) => set(flagName, { to: false }),
 
           reset: () => {
             changedFlags.forEach(
