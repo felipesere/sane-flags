@@ -124,7 +124,7 @@ export const saneFlags = {
       try {
         return closure()
       } finally {
-        flags[flagName as string].enabled = oldFlagValue
+        flags[flagName].enabled = oldFlagValue
       }
     }
 
@@ -155,23 +155,20 @@ export const saneFlags = {
       },
 
       summary: function() {
-        const self: FeatureFlags<C, TFlagName> = this;
         const table = new AsciiTable('Tracked features')
         table.setHeading('name', 'description', 'enabled?')
 
-        for (const flagName in flags) {
-          const flag = flags[flagName]
-          table.addRow(flagName, flag.description, self.isEnabled(flagName as any))
+        for (const {name, enabled, description} of this.state()) {
+          table.addRow(name, description, enabled)
         }
         return table.toString()
       },
 
       state: function() {
-        const features: FeatureFlags<C, TFlagName> = this
         return Object.keys(flags).map((flagName) => {
           return {
             name: flagName,
-            enabled: features.isEnabled(flagName as any),
+            enabled: this.isEnabled(flagName as TFlagName),
             description: flags[flagName].description
           }
         })
