@@ -113,13 +113,13 @@ const hardEnabled = (environments: CurrentEnvironment | undefined, flag: Flag) =
 type ToggledFlag<TResult> = Readonly<{to: boolean, around: () => TResult}>
 
 export const saneFlags = {
-  wrap: <C extends Config, TFlagName extends keyof C["flags"]>(config: C): FeatureFlags<C, TFlagName> => {
+  wrap: <C extends Config, TFlagName extends keyof C["flags"] & string>(config: C): FeatureFlags<C, TFlagName> => {
     checkConsistency(config)
     const { flags, sources = [], environments } = config
 
     const toggle = <TResult>(self: FeatureFlags<C, TFlagName>, flagName: TFlagName, { to: value, around: closure }: ToggledFlag<TResult>): TResult => {
       const oldFlagValue = self.isEnabled(flagName)
-      flags[flagName as string].enabled = value
+      flags[flagName].enabled = value
 
       try {
         return closure()
@@ -130,27 +130,27 @@ export const saneFlags = {
 
     const toggleAsync = async <TResult>(self: FeatureFlags<C, TFlagName>, flagName: TFlagName, { to: value , around: closure }: ToggledFlag<Promise<TResult>> ): Promise<TResult> => {
       const oldFlagValue = self.isEnabled(flagName)
-      flags[flagName as string].enabled = value
+      flags[flagName].enabled = value
 
       try {
         return await closure()
       } finally {
-        flags[flagName as string].enabled = oldFlagValue
+        flags[flagName].enabled = oldFlagValue
       }
     }
 
     return {
       isEnabled: (flagName: TFlagName) => {
-        const flag = flags[flagName as string]
+        const flag = flags[flagName]
         if (flag) {
-          flag.name = flagName as string
+          flag.name = flagName
           return (
             hardEnabled(environments, flag) ||
             checkSources(sources, flag) ||
             false
           )
         } else {
-          throw errors.unknown_feature(flagName as string)
+          throw errors.unknown_feature(flagName)
         }
       },
 
@@ -202,7 +202,7 @@ export const saneFlags = {
             flag: flagName,
             originalValue: isEnabled
           })
-          flags[flagName as string].enabled = value
+          flags[flagName].enabled = value
         }
 
         return {
@@ -223,7 +223,7 @@ export const saneFlags = {
   },
   sources: {
     processEnvSource: (flag: FlagWithEnvironment) => {
-      const value = process.env[flag.environment_flag] as string
+      const value = process.env[flag.environment_flag]
       return value === '1' || value === 'true'
     }
   }
