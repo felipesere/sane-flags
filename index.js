@@ -1,5 +1,3 @@
-var AsciiTable = require('ascii-table')
-
 const errors = {
   unknown_feature: (flagName) =>
     `There is no feature named '${flagName}'. Check in your features file to see if there was a spelling mistake.`,
@@ -108,17 +106,6 @@ module.exports = {
         } else {
           throw errors.unknown_feature(flagName)
         }
-      },
-
-      summary: function() {
-        const table = new AsciiTable('Tracked featurs')
-        table.setHeading('name', 'description', 'enabled?')
-
-        for (const flagName in flags) {
-          const flag = flags[flagName]
-          table.addRow(flagName, flag.description, this.isEnabled(flagName))
-        }
-        return table.toString()
       },
 
       state: function() {

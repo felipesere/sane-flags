@@ -139,8 +139,8 @@ Failure to do so will throw an error when calling `wrap(config)` to avoid odd be
 
 ## Insight
 
-In the spirit of being explicit `sane-flags` is able to give you an ASCII table
-showing which features are enabled/disabled:
+Sane-flags is able to tell you at any point in time what the state of feature flags are.
+This is valuable for example when booting a service and printing the state of the flags to the console.
 
 Given:
 ```javascript
@@ -171,27 +171,11 @@ features = saneFlags.wrap({
 })
 ```
 
-Then calling `features.summary()` will give you a little table like this:
-
-```
-.-----------------------------------------------------------------------------------------------------.
-|                                           Tracked featurs                                           |
-|-----------------------------------------------------------------------------------------------------|
-|         name         |                            description                            | enabled? |
-|----------------------|-------------------------------------------------------------------|----------|
-| dynamic_contact_form | The new form that fills in form contacts from the current account | true     |
-| disabled_feature     | The feature we are working on but have disabled                   | false    |
-| cool_feature         | The feature we are working on but have disabled                   | false    |
-'-----------------------------------------------------------------------------------------------------'
-```
-
-If you need programatic access to the current state of the feature flags, you can call `.state()` resulting in
+Then `.state()` will print a JSON representation that you could turn into a table:
 
 ```
 features.state() // => [{name: 'dynamic_contact_form', enabled: true, description: '...'}, {name: 'disabled_feature', enabled: false, description: '...'}, ... ]
 ```
-
-
 
 ## Feature flags and tests
 
