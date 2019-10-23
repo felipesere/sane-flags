@@ -185,10 +185,23 @@ describe('the sane flags', () => {
 
   it('presents the state of all available features', () => {
     expect(features.state()).to.have.deep.members([
-      { name: 'dynamic_contact_form', enabled: true, description: 'The new form that fills in form contacts from the current account'},
-      { name: 'disabled_feature', enabled: false, description: 'The feature we are working on but have disabled'},
-      { name: 'enabled_feature', enabled: true, description: 'This is on'},
-      { name: 'cool_feature', enabled: false, description: 'The feature we are working on but have disabled'}
+      {
+        name: 'dynamic_contact_form',
+        enabled: true,
+        description:
+          'The new form that fills in form contacts from the current account'
+      },
+      {
+        name: 'disabled_feature',
+        enabled: false,
+        description: 'The feature we are working on but have disabled'
+      },
+      { name: 'enabled_feature', enabled: true, description: 'This is on' },
+      {
+        name: 'cool_feature',
+        enabled: false,
+        description: 'The feature we are working on but have disabled'
+      }
     ])
   })
 
