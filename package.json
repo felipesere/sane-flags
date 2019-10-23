@@ -1,6 +1,6 @@
 {
   "name": "sane-flags",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A small library for feature flags with explicitness in mind",
   "keywords": [
     "features",
