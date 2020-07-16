@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/felipesere/sane-flags.svg?branch=master)](https://travis-ci.org/felipesere/sane-flags)
 [![Coverage Status](https://coveralls.io/repos/github/felipesere/sane-flags/badge.svg?branch=master)](https://coveralls.io/github/felipesere/sane-flags?branch=master)
 [![npm version](https://badge.fury.io/js/sane-flags.svg)](https://badge.fury.io/js/sane-flags)
-[![npm dependencies](https://david-dm.org/felipesere/sane-flags.svg)](https://david-dm.org/felipesere/sane-flags.svg)
 
 # Welcome to `Sane Flags`
 
