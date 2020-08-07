@@ -95,7 +95,7 @@ module.exports = {
 
     return {
       isEnabled: function(flagName) {
-        flag = flags[flagName]
+        const flag = flags[flagName]
         if (flag) {
           flag.name = flagName
           return (
