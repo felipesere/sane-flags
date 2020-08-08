@@ -12,10 +12,6 @@ type Environments = Readonly<
   { available: AvailableEnvironments } & CurrentEnvironment
 >
 
-type FlagWithEnvironment = Readonly<{
-  environment_flag: string
-}>
-
 export interface Config {
   flags: { [key: string]: Flag }
   environments?: Environments
@@ -27,7 +23,6 @@ type SourceObject = Readonly<{ isEnabled: SourceFn }>
 type Source = SourceFn | SourceObject
 
 type State = Flag[]
-type ChangedFlag<TFlagName> = { flag: TFlagName; originalValue: boolean }
 
 interface TestBox<TFlagName> {
   enable: (flag: TFlagName) => void
