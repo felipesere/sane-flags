@@ -1,5 +1,4 @@
 import * as saneFlags from '../index.js'
-// import "../index.d.ts"
 import { expect, use } from 'chai'
 import * as chaiAsPromised from 'chai-as-promised'
 import { Source } from '../index.js'
