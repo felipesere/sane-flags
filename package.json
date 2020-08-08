@@ -15,7 +15,7 @@
   "scripts": {
     "test": "mocha --require test/setup.js && npm run ts-test",
     "ts-test": "mocha -r ts-node/register 'test/*.ts'",
-    "prettier": "prettier --write test/*.js index.js"
+    "prettier": "prettier --write test/* index.js index.d.ts"
   },
   "prettier": {
     "semi": false,

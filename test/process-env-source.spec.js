@@ -7,10 +7,10 @@ describe('the process env source', () => {
         description:
           'a feature which will be activated with a process variable',
         enabled: false,
-        environment_flag: 'THIS_IS_THE_FLAG'
-      }
+        environment_flag: 'THIS_IS_THE_FLAG',
+      },
     },
-    sources: [saneFlags.sources.processEnvSource]
+    sources: [saneFlags.sources.processEnvSource],
   }
 
   const features = saneFlags.wrap(config)
@@ -19,7 +19,7 @@ describe('the process env source', () => {
     { value: 1, expect_to_be: 'enabled' },
     { value: true, expect_to_be: 'enabled' },
     { value: 0, expect_to_be: 'disabled' },
-    { value: false, expect_to_be: 'disabled' }
+    { value: false, expect_to_be: 'disabled' },
   ]
 
   for (const { value, expect_to_be } of settings) {

@@ -9,29 +9,29 @@ describe('the sane flags', () => {
         dynamic_contact_form: {
           description:
             'The new form that fills in form contacts from the current account',
-          enabled: true
+          enabled: true,
         },
 
         disabled_feature: {
           description: 'The feature we are working on but have disabled',
-          enabled: false
+          enabled: false,
         },
         enabled_feature: {
           description: 'This is on',
-          enabled: true
+          enabled: true,
         },
         cool_feature: {
           description: 'The feature we are working on but have disabled',
           enabled: {
             dev: true,
-            qa: false
-          }
-        }
+            qa: false,
+          },
+        },
       },
       environments: {
         available: ['dev', 'qa'],
-        current: 'qa'
-      }
+        current: 'qa',
+      },
     })
   })
 
@@ -57,7 +57,7 @@ describe('the sane flags', () => {
     const naiveSource = (flag) => flag.name === 'from_the_naive_source'
 
     const complexSource = {
-      isEnabled: (flag) => flag.name === 'from_the_complex_source'
+      isEnabled: (flag) => flag.name === 'from_the_complex_source',
     }
 
     beforeEach(() => {
@@ -65,15 +65,15 @@ describe('the sane flags', () => {
         flags: {
           from_the_naive_source: {
             description: 'A flag that is enabled by a simple functipon',
-            enabled: false
+            enabled: false,
           },
 
           from_the_complex_source: {
             description: 'A flag that is enabled by a complex object',
-            enabled: false
-          }
+            enabled: false,
+          },
         },
-        sources: [naiveSource, complexSource]
+        sources: [naiveSource, complexSource],
       })
     })
 
@@ -94,25 +94,25 @@ describe('the sane flags', () => {
         enabled_in_dev: {
           description: 'This feature should only be turned in in development',
           enabled: {
-            dev: true
-          }
+            dev: true,
+          },
         },
         enabled_in_qa: {
           description: 'This is only on in QA',
           enabled: {
             dev: false,
-            qa: true
-          }
+            qa: true,
+          },
         },
         always_on: {
           description: 'Evergreen feature',
-          enabled: true
-        }
+          enabled: true,
+        },
       },
       environments: {
         available: ['dev', 'qa'],
-        current: 'dev'
-      }
+        current: 'dev',
+      },
     })
 
     it('allow you to have different settings for different environments', () => {
@@ -127,9 +127,9 @@ describe('the sane flags', () => {
       const config = {
         flags: {
           has_no_description: {
-            enabled: true
-          }
-        }
+            enabled: true,
+          },
+        },
       }
 
       expect(() => saneFlags.wrap(config)).to.throw('has_no_description')
@@ -139,9 +139,9 @@ describe('the sane flags', () => {
       const config = {
         flags: {
           is_it_enabled: {
-            description: 'Is this feature really on?'
-          }
-        }
+            description: 'Is this feature really on?',
+          },
+        },
       }
 
       expect(() => saneFlags.wrap(config)).to.throw('is_it_enabled')
@@ -153,10 +153,10 @@ describe('the sane flags', () => {
           anything: {
             description: 'We dont know odd or dev yet',
             enabled: {
-              dev: true
-            }
-          }
-        }
+              dev: true,
+            },
+          },
+        },
       }
 
       expect(() => saneFlags.wrap(config)).to.throw(
@@ -170,13 +170,13 @@ describe('the sane flags', () => {
           anything: {
             description: 'We dont know odd or dev yet',
             enabled: {
-              odd: true
-            }
-          }
+              odd: true,
+            },
+          },
         },
         environments: {
-          available: ['dev']
-        }
+          available: ['dev'],
+        },
       }
 
       expect(() => saneFlags.wrap(config)).to.throw('anything')
@@ -189,19 +189,19 @@ describe('the sane flags', () => {
         name: 'dynamic_contact_form',
         enabled: true,
         description:
-          'The new form that fills in form contacts from the current account'
+          'The new form that fills in form contacts from the current account',
       },
       {
         name: 'disabled_feature',
         enabled: false,
-        description: 'The feature we are working on but have disabled'
+        description: 'The feature we are working on but have disabled',
       },
       { name: 'enabled_feature', enabled: true, description: 'This is on' },
       {
         name: 'cool_feature',
         enabled: false,
-        description: 'The feature we are working on but have disabled'
-      }
+        description: 'The feature we are working on but have disabled',
+      },
     ])
   })
 

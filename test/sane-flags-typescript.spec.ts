@@ -1,8 +1,8 @@
-import * as saneFlags from "../index.js";
+import * as saneFlags from '../index.js'
 // import "../index.d.ts"
-import {expect, use} from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-import {  Source} from '../index.js'
+import { expect, use } from 'chai'
+import * as chaiAsPromised from 'chai-as-promised'
+import { Source } from '../index.js'
 
 use(chaiAsPromised)
 
@@ -12,29 +12,29 @@ describe('the sane-flags in typescript', () => {
       dynamic_contact_form: {
         description:
           'The new form that fills in form contacts from the current account',
-        enabled: true
+        enabled: true,
       },
 
       disabled_feature: {
         description: 'The feature we are working on but have disabled',
-        enabled: false
+        enabled: false,
       },
       enabled_feature: {
         description: 'This is on',
-        enabled: true
+        enabled: true,
       },
       cool_feature: {
         description: 'The feature we are working on but have disabled',
         enabled: {
           dev: true,
-          qa: false
-        }
-      }
+          qa: false,
+        },
+      },
     },
     environments: {
       available: ['dev', 'qa'],
-      current: 'qa'
-    }
+      current: 'qa',
+    },
   }
   it('can check if features are enabled', () => {
     let features = saneFlags.wrap(config)
@@ -50,22 +50,22 @@ describe('the sane-flags in typescript', () => {
     const naiveSource: Source = (flag) => flag.name === 'from_the_naive_source'
 
     const complexSource: Source = {
-      isEnabled: (flag) => flag.name === 'from_the_complex_source'
+      isEnabled: (flag) => flag.name === 'from_the_complex_source',
     }
 
     const smallerConfig = {
       flags: {
         from_the_naive_source: {
           description: 'A flag that is enabled by a simple functipon',
-          enabled: false
+          enabled: false,
         },
 
         from_the_complex_source: {
           description: 'A flag that is enabled by a complex object',
-          enabled: false
-        }
+          enabled: false,
+        },
       },
-      sources: [naiveSource, complexSource]
+      sources: [naiveSource, complexSource],
     }
 
     it('as simple functions', () => {
@@ -87,25 +87,25 @@ describe('the sane-flags in typescript', () => {
         enabled_in_dev: {
           description: 'This feature should only be turned in in development',
           enabled: {
-            dev: true
-          }
+            dev: true,
+          },
         },
         enabled_in_qa: {
           description: 'This is only on in QA',
           enabled: {
             dev: false,
-            qa: true
-          }
+            qa: true,
+          },
         },
         always_on: {
           description: 'Evergreen feature',
-          enabled: true
-        }
+          enabled: true,
+        },
       },
       environments: {
         available: ['dev', 'qa'],
-        current: 'dev'
-      }
+        current: 'dev',
+      },
     })
 
     it('allow you to have different settings for different environments', () => {
@@ -116,31 +116,31 @@ describe('the sane-flags in typescript', () => {
   })
 
   it('presents the state of all available features', () => {
-    const features = saneFlags.wrap(config);
+    const features = saneFlags.wrap(config)
     expect(features.state()).to.have.deep.members([
       {
         name: 'dynamic_contact_form',
         enabled: true,
         description:
-          'The new form that fills in form contacts from the current account'
+          'The new form that fills in form contacts from the current account',
       },
       {
         name: 'disabled_feature',
         enabled: false,
-        description: 'The feature we are working on but have disabled'
+        description: 'The feature we are working on but have disabled',
       },
       { name: 'enabled_feature', enabled: true, description: 'This is on' },
       {
         name: 'cool_feature',
         enabled: false,
-        description: 'The feature we are working on but have disabled'
-      }
+        description: 'The feature we are working on but have disabled',
+      },
     ])
   })
 
   describe('supports tests by...', () => {
     it('...temporariliy enabling features', () => {
-      const features = saneFlags.wrap(config);
+      const features = saneFlags.wrap(config)
       features.enabling('disabled_feature', () => {
         expect(features.isEnabled('disabled_feature')).to.eql(true)
       })
@@ -148,7 +148,7 @@ describe('the sane-flags in typescript', () => {
     })
 
     it('...temporariliy disabling features', () => {
-      const features = saneFlags.wrap(config);
+      const features = saneFlags.wrap(config)
       features.disabling('enabled_feature', () => {
         expect(features.isEnabled('enabled_feature')).to.eql(false)
       })
@@ -156,7 +156,7 @@ describe('the sane-flags in typescript', () => {
     })
 
     it('...resetting feature when exceptions happen', () => {
-      const features = saneFlags.wrap(config);
+      const features = saneFlags.wrap(config)
       expect(() =>
         features.enabling('disabled_feature', () => {
           throw Error('this should not have happend')
@@ -166,7 +166,7 @@ describe('the sane-flags in typescript', () => {
     })
 
     it('...resetting features when exceptions happen async code', async () => {
-      const features = saneFlags.wrap(config);
+      const features = saneFlags.wrap(config)
       await expect(
         features.enablingAsync('disabled_feature', () => {
           throw new Error('this shoudl bubble up')
@@ -177,7 +177,7 @@ describe('the sane-flags in typescript', () => {
     })
 
     it('...temporarily enabling features around async functions', async () => {
-      const features = saneFlags.wrap(config);
+      const features = saneFlags.wrap(config)
       let someFunctionHere = async () => features.isEnabled('disabled_feature')
 
       const wasItEnabled = await expect(
@@ -191,19 +191,22 @@ describe('the sane-flags in typescript', () => {
     })
 
     it('...temporarily disabling features around async functions', async () => {
-      const features = saneFlags.wrap(config);
+      const features = saneFlags.wrap(config)
       let someFunctionHere = async () => features.isEnabled('enabled_feature')
 
-      const wasItEnabled = await features.disablingAsync('enabled_feature', async () => {
-        return await someFunctionHere()
-      })
+      const wasItEnabled = await features.disablingAsync(
+        'enabled_feature',
+        async () => {
+          return await someFunctionHere()
+        }
+      )
 
       expect(wasItEnabled).to.eql(false)
       expect(features.isEnabled('enabled_feature')).to.eql(true)
     })
 
     it('...allowing you to enable and disable multiple features at once', () => {
-      const features = saneFlags.wrap(config);
+      const features = saneFlags.wrap(config)
       const box = features.testBox()
       box.enable('disabled_feature')
       box.disable('enabled_feature')
