@@ -1,88 +1,80 @@
-const saneFlags = require('../index')
+import * as saneFlags from '../index.js'
+import { expect, use } from 'chai'
+import * as chaiAsPromised from 'chai-as-promised'
+import { Source } from '../index.js'
 
-describe('the sane flags', () => {
-  let features
+use(chaiAsPromised)
 
-  beforeEach(() => {
-    features = saneFlags.wrap({
-      flags: {
-        dynamic_contact_form: {
-          description:
-            'The new form that fills in form contacts from the current account',
-          enabled: true,
-        },
+describe('the sane-flags in typescript', () => {
+  let config = {
+    flags: {
+      dynamic_contact_form: {
+        description:
+          'The new form that fills in form contacts from the current account',
+        enabled: true,
+      },
 
-        disabled_feature: {
-          description: 'The feature we are working on but have disabled',
-          enabled: false,
-        },
-        enabled_feature: {
-          description: 'This is on',
-          enabled: true,
-        },
-        cool_feature: {
-          description: 'The feature we are working on but have disabled',
-          enabled: {
-            dev: true,
-            qa: false,
-          },
+      disabled_feature: {
+        description: 'The feature we are working on but have disabled',
+        enabled: false,
+      },
+      enabled_feature: {
+        description: 'This is on',
+        enabled: true,
+      },
+      cool_feature: {
+        description: 'The feature we are working on but have disabled',
+        enabled: {
+          dev: true,
+          qa: false,
         },
       },
-      environments: {
-        available: ['dev', 'qa'],
-        current: 'qa',
-      },
-    })
-  })
-
+    },
+    environments: {
+      available: ['dev', 'qa'],
+      current: 'qa',
+    },
+  }
   it('can check if features are enabled', () => {
+    let features = saneFlags.wrap(config)
     expect(features.isEnabled('dynamic_contact_form')).to.be.true
   })
 
   it('can check if features are disabled', () => {
+    let features = saneFlags.wrap(config)
     expect(features.isEnabled('disabled_feature')).to.be.false
   })
 
-  it('will notify you when asked about unknown features', () => {
-    expect(() => {
-      features.isEnabled('unknown_feature')
-    }).to.throw(
-      "There is no feature named 'unknown_feature'. Check in your features file to see if there was a spelling mistake."
-    )
-  })
-
   describe('supports external sources', () => {
-    let featuresWithExtraSource
+    const naiveSource: Source = (flag) => flag.name === 'from_the_naive_source'
 
-    const naiveSource = (flag) => flag.name === 'from_the_naive_source'
-
-    const complexSource = {
+    const complexSource: Source = {
       isEnabled: (flag) => flag.name === 'from_the_complex_source',
     }
 
-    beforeEach(() => {
-      featuresWithExtraSource = saneFlags.wrap({
-        flags: {
-          from_the_naive_source: {
-            description: 'A flag that is enabled by a simple functipon',
-            enabled: false,
-          },
-
-          from_the_complex_source: {
-            description: 'A flag that is enabled by a complex object',
-            enabled: false,
-          },
+    const smallerConfig = {
+      flags: {
+        from_the_naive_source: {
+          description: 'A flag that is enabled by a simple functipon',
+          enabled: false,
         },
-        sources: [naiveSource, complexSource],
-      })
-    })
+
+        from_the_complex_source: {
+          description: 'A flag that is enabled by a complex object',
+          enabled: false,
+        },
+      },
+      sources: [naiveSource, complexSource],
+    }
 
     it('as simple functions', () => {
+      const featuresWithExtraSource = saneFlags.wrap(smallerConfig)
       expect(featuresWithExtraSource.isEnabled('from_the_naive_source')).to.be
         .true
     })
 
     it('as objects with an isEnabled function', () => {
+      const featuresWithExtraSource = saneFlags.wrap(smallerConfig)
       expect(featuresWithExtraSource.isEnabled('from_the_complex_source')).to.be
         .true
     })
@@ -122,68 +114,8 @@ describe('the sane flags', () => {
     })
   })
 
-  describe('fails with a consistency error when...', () => {
-    it('...a flag is missing a description', () => {
-      const config = {
-        flags: {
-          has_no_description: {
-            enabled: true,
-          },
-        },
-      }
-
-      expect(() => saneFlags.wrap(config)).to.throw('has_no_description')
-    })
-
-    it('...a flag is neither enabled nor disabled', () => {
-      const config = {
-        flags: {
-          is_it_enabled: {
-            description: 'Is this feature really on?',
-          },
-        },
-      }
-
-      expect(() => saneFlags.wrap(config)).to.throw('is_it_enabled')
-    })
-
-    it('...multiple environments are not listed as available', () => {
-      const config = {
-        flags: {
-          anything: {
-            description: 'We dont know odd or dev yet',
-            enabled: {
-              dev: true,
-            },
-          },
-        },
-      }
-
-      expect(() => saneFlags.wrap(config)).to.throw(
-        'You need to configure which environments'
-      )
-    })
-
-    it('...a flag is configured for an unexpected environment', () => {
-      const config = {
-        flags: {
-          anything: {
-            description: 'We dont know odd or dev yet',
-            enabled: {
-              odd: true,
-            },
-          },
-        },
-        environments: {
-          available: ['dev'],
-        },
-      }
-
-      expect(() => saneFlags.wrap(config)).to.throw('anything')
-    })
-  })
-
   it('presents the state of all available features', () => {
+    const features = saneFlags.wrap(config)
     expect(features.state()).to.have.deep.members([
       {
         name: 'dynamic_contact_form',
@@ -207,6 +139,7 @@ describe('the sane flags', () => {
 
   describe('supports tests by...', () => {
     it('...temporariliy enabling features', () => {
+      const features = saneFlags.wrap(config)
       features.enabling('disabled_feature', () => {
         expect(features.isEnabled('disabled_feature')).to.eql(true)
       })
@@ -214,6 +147,7 @@ describe('the sane flags', () => {
     })
 
     it('...temporariliy disabling features', () => {
+      const features = saneFlags.wrap(config)
       features.disabling('enabled_feature', () => {
         expect(features.isEnabled('enabled_feature')).to.eql(false)
       })
@@ -221,6 +155,7 @@ describe('the sane flags', () => {
     })
 
     it('...resetting feature when exceptions happen', () => {
+      const features = saneFlags.wrap(config)
       expect(() =>
         features.enabling('disabled_feature', () => {
           throw Error('this should not have happend')
@@ -230,6 +165,7 @@ describe('the sane flags', () => {
     })
 
     it('...resetting features when exceptions happen async code', async () => {
+      const features = saneFlags.wrap(config)
       await expect(
         features.enablingAsync('disabled_feature', () => {
           throw new Error('this shoudl bubble up')
@@ -240,12 +176,12 @@ describe('the sane flags', () => {
     })
 
     it('...temporarily enabling features around async functions', async () => {
-      let wasItEnabled
+      const features = saneFlags.wrap(config)
       let someFunctionHere = async () => features.isEnabled('disabled_feature')
 
-      await expect(
+      const wasItEnabled = await expect(
         features.enablingAsync('disabled_feature', async () => {
-          wasItEnabled = await someFunctionHere()
+          return await someFunctionHere()
         })
       ).to.eventually.be.fulfilled
 
@@ -254,18 +190,22 @@ describe('the sane flags', () => {
     })
 
     it('...temporarily disabling features around async functions', async () => {
-      let wasItDisabled
+      const features = saneFlags.wrap(config)
       let someFunctionHere = async () => features.isEnabled('enabled_feature')
 
-      await features.disablingAsync('enabled_feature', async () => {
-        wasItEnabled = await someFunctionHere()
-      })
+      const wasItEnabled = await features.disablingAsync(
+        'enabled_feature',
+        async () => {
+          return await someFunctionHere()
+        }
+      )
 
       expect(wasItEnabled).to.eql(false)
       expect(features.isEnabled('enabled_feature')).to.eql(true)
     })
 
     it('...allowing you to enable and disable multiple features at once', () => {
+      const features = saneFlags.wrap(config)
       const box = features.testBox()
       box.enable('disabled_feature')
       box.disable('enabled_feature')

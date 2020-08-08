@@ -8,7 +8,7 @@ const errors = {
   unknown_env_enabled: (flagName, envInFlag, configuredEnvs) =>
     `The feature flag ${flagName} is configured for ${envInFlag} that is not listed in environments.available: ${configuredEnvs}. Please check if this is an error.`,
   missing_environment: () =>
-    'You need to configure which environments are available to your application under config.environments.available as an array of strings. This allows us to check your config for consistency'
+    'You need to configure which environments are available to your application under config.environments.available as an array of strings. This allows us to check your config for consistency',
 }
 
 const checkConsistency = (config) => {
@@ -94,8 +94,8 @@ module.exports = {
     }
 
     return {
-      isEnabled: function(flagName) {
-        flag = flags[flagName]
+      isEnabled: function (flagName) {
+        const flag = flags[flagName]
         if (flag) {
           flag.name = flagName
           return (
@@ -108,33 +108,33 @@ module.exports = {
         }
       },
 
-      state: function() {
+      state: function () {
         return Object.keys(flags).map((flagName) => {
           return {
             name: flagName,
             enabled: this.isEnabled(flagName),
-            description: flags[flagName].description
+            description: flags[flagName].description,
           }
         })
       },
 
-      enabling: function(flagName, closure) {
+      enabling: function (flagName, closure) {
         return toggle(this, flagName, { to: true, around: closure })
       },
 
-      disabling: function(flagName, closure) {
+      disabling: function (flagName, closure) {
         return toggle(this, flagName, { to: false, around: closure })
       },
 
-      enablingAsync: async function(flagName, closure) {
+      enablingAsync: async function (flagName, closure) {
         return toggleAsync(this, flagName, { to: true, around: closure })
       },
 
-      disablingAsync: async function(flagName, closure) {
+      disablingAsync: async function (flagName, closure) {
         return toggleAsync(this, flagName, { to: false, around: closure })
       },
 
-      testBox: function() {
+      testBox: function () {
         const features = this
         let changedFlags = []
 
@@ -142,7 +142,7 @@ module.exports = {
           const isEnabled = features.isEnabled(flagName)
           changedFlags = changedFlags.concat({
             flag: flagName,
-            originalValue: isEnabled
+            originalValue: isEnabled,
           })
           flags[flagName].enabled = value
         }
@@ -158,15 +158,15 @@ module.exports = {
             )
 
             changedFlags = []
-          }
+          },
         }
-      }
+      },
     }
   },
   sources: {
     processEnvSource: (flag) => {
       const value = process.env[flag.environment_flag]
       return value === '1' || value === 'true'
-    }
-  }
+    },
+  },
 }

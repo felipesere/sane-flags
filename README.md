@@ -4,11 +4,11 @@
 
 # Welcome to `Sane Flags`
 
-`Sane flags` is a small, focused library to add feature flags to your JavaScript application.
+`Sane flags` is a small, focused library to add feature flags to your JavaScript or TypeScript application.
 
 ## Be Explicit
 
-_You should be able to see all the available feature flags._
+_You should be able to see all the available feature flags that are part of the app!._
 
 Because there might be subtle interactions between multiple flags, its key see what is available at any time.
 This also allows you to better sunset flags.
@@ -37,7 +37,7 @@ var features = saneFlags.wrap({
 ### Globally turn a feature on or off
 
 When you want to ship a piece of code, without having it really running in production.
-This makes super sense if you practice continuous integration.
+This is an important technique if you practice continuous integration.
 
 Given the following file containing all your features flags:
 
@@ -134,6 +134,9 @@ Using `process.env.APPLICATION_ENV` is just an example here.
 Every flag MUST have a `description` and an `enabled` key.
 To use the per-environment configuration of enabled, you MUST declare the available environments in the `environments` key.
 Failure to do so will throw an error when calling `wrap(config)` to avoid odd behaviour and enforce good practices as far as possible.
+
+If you are using `sane-flags` in TypeScript, you will notice that it comes with proper type definitions that force this same principle:
+The type system will not allow you to call `.isEnabled('some-flag')` or `.isDisabled('other-flag')` if those keys don't exist in the `flags` object in the config.
 
 
 ## Insight
