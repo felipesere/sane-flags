@@ -13,10 +13,9 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "mocha --require test/setup.js",
+    "test": "mocha --require test/setup.js && npm run ts-test",
     "ts-test": "mocha -r ts-node/register 'test/*.ts'",
-    "prettier": "prettier --write test/*.js index.js",
-    "check": "tsc"
+    "prettier": "prettier --write test/*.js index.js"
   },
   "prettier": {
     "semi": false,
