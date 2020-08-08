@@ -1,7 +1,7 @@
-type DirectLyEnabled = boolean
+type DirectlyEnabled = boolean
 type EnabledEnvironments = { [k: string]: boolean }
 export type Flag = {
-  enabled: DirectLyEnabled | EnabledEnvironments
+  enabled: DirectlyEnabled | EnabledEnvironments
   description: string
   name?: string
 }
