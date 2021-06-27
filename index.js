@@ -1,3 +1,5 @@
+'use strict';
+
 const errors = {
   unknown_feature: (flagName) =>
     `There is no feature named '${flagName}'. Check in your features file to see if there was a spelling mistake.`,
@@ -95,7 +97,7 @@ module.exports = {
 
     return {
       isEnabled: function(flagName) {
-        flag = flags[flagName]
+        const flag = flags[flagName]
         if (flag) {
           flag.name = flagName
           return (
